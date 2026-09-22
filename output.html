@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stage LED Wall Output</title>
+  <!-- Real-time Cloud Sync Library -->
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body, html {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+    }
+
+    #stage-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      transition: opacity 0.25s ease;
+    }
+
+    #bg-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      transition: opacity 0.2s ease;
+    }
+
+    #bg-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      display: none;
+      transition: opacity 0.2s ease;
+    }
+
+    #bg-dimmer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      opacity: 0.3;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #stage-header-group {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 4;
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+
+    #stage-logo {
+      max-height: 48px;
+      max-width: 120px;
+      object-fit: contain;
+      display: none;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
+    }
+
+    #stage-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+    }
+
+    #lyric-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      padding: 5vh 6vw;
+      display: flex;
+      z-index: 5;
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+
+    #lyric-text {
+      font-weight: 700;
+      line-height: 1.28;
+      text-shadow: 
+        0 2px 4px rgba(0,0,0,0.8),
+        0 4px 18px rgba(0,0,0,0.9),
+        0 0 24px rgba(0,0,0,0.8);
+      opacity: 1;
+      transition: opacity 0.2s ease-in-out;
+      word-break: break-word;
+      max-width: 100%;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: #181b24;
+      border: 1px solid #262b3a;
+      border-radius: 12px;
+      padding: 32px 32px 24px 32px;
+      width: 380px;
+      text-align: center;
+      color: #f3f4f6;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
+    .modal-card h2 { font-size: 20px; margin-bottom: 8px; }
+    .modal-card p {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .modal-card input {
+      width: 100%;
+      background: #0f1117;
+      border: 2px solid #374151;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      text-align: center;
+      color: #38bdf8;
+      outline: none;
+      margin-bottom: 16px;
+      transition: border 0.15s;
+    }
+    .modal-card input:focus { border-color: #2563eb; }
+
+    .modal-card button {
+      width: 100%;
+      padding: 12px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .modal-card button:hover { background: #1d4ed8; }
+
+    .output-credits {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid #262b3a;
+      font-size: 11px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+    .output-credits strong { color: #9ca3af; }
+  </style>
+</head>
+<body>
+
+  <div id="stage-container">
+    <canvas id="bg-canvas"></canvas>
+    <video id="bg-video" muted playsinline></video>
+    <div id="bg-dimmer"></div>
+
+    <div id="stage-header-group">
+      <img id="stage-logo" alt="Stage Logo">
+      <span id="stage-title"></span>
+    </div>
+
+    <div id="lyric-container">
+      <span id="lyric-text">STAGE READY</span>
+    </div>
+  </div>
+
+  <div id="pairing-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <h2>Connect to Concert Stage</h2>
+      <p>Enter the 6-digit Stage Code shown in the top-right corner of the Dashboard.</p>
+      <input type="text" id="uid-input" maxlength="6" placeholder="000000" autocomplete="off">
+      <button id="btn-connect">Connect Display</button>
+
+      <div class="output-credits">
+        <div>Developed by: <strong>Cyril Sajeev</strong></div>
+        <div>Contact: +91 8078082431</div>
+        <div>cyrilsajeevarthiyil@gmail.com</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    let pairedUID = urlParams.get("room") || localStorage.getItem("stage_obs_paired_uid");
+
+    const modal = document.getElementById("pairing-modal");
+    const uidInput = document.getElementById("uid-input");
+    const btnConnect = document.getElementById("btn-connect");
+    let syncChannel = null;
+    let mqttClient = null;
+
+    // Fallback Initial Config so output is NEVER blank on launch
+    let currentConfig = {
+      activeLine: "STAGE READY",
+      blackout: false,
+      style: {
+        fontFamily: "Arial, sans-serif",
+        fontSize: 64,
+        fontColor: "#ffffff",
+        textAlign: "center",
+        textVertAlign: "center",
+        textPosY: 50,
+        groupLogo: null,
+        groupTitle: "",
+        groupColor: "#ffffff",
+        groupPosX: 5,
+        groupPosY: 5,
+        bgType: "pattern",
+        bgOpacity: 100,
+        bgDimmer: 30,
+        patternId: "floating-particles",
+        patternColor: "#38bdf8",
+        patternSpeed: 3,
+        patternScale: 50
+      }
+    };
+
+    if (pairedUID && pairedUID.length === 6) {
+      initConnection(pairedUID);
+    } else {
+      modal.style.display = "flex";
+      uidInput.focus();
+    }
+
+    btnConnect.onclick = () => {
+      const entered = uidInput.value.trim();
+      if (entered.length === 6 && /^\d+$/.test(entered)) {
+        pairedUID = entered;
+        localStorage.setItem("stage_obs_paired_uid", entered);
+        modal.style.display = "none";
+        initConnection(entered);
+      } else {
+        alert("Please enter a valid 6-digit numeric stage code.");
+      }
+    };
+
+    uidInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") btnConnect.click();
+    });
+
+    function initConnection(uid) {
+      // 1. Local Broadcast Channel (Same browser)
+      syncChannel = new BroadcastChannel(`stage_channel_${uid}`);
+      syncChannel.onmessage = (event) => applyStageState(event.data);
+
+      // 2. Cross-Device Cloud Real-time Link (WebSockets)
+      mqttClient = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
+      const mqttTopic = `concert_stage_live_${uid}`;
+
+      mqttClient.on("connect", () => {
+        mqttClient.subscribe(mqttTopic);
+      });
+
+      mqttClient.on("message", (topic, message) => {
+        try {
+          const data = JSON.parse(message.toString());
+          applyStageState(data);
+        } catch(e) {}
+      });
+
+      // 3. LocalStorage check
+      const cached = localStorage.getItem(`stage_payload_${uid}`);
+      if (cached) {
+        try { applyStageState(JSON.parse(cached)); } catch(e) {}
+      }
+    }
+
+    const stageContainer = document.getElementById("stage-container");
+    const lyricContainer = document.getElementById("lyric-container");
+    const lyricText = document.getElementById("lyric-text");
+    const bgDimmer = document.getElementById("bg-dimmer");
+    const headerGroup = document.getElementById("stage-header-group");
+    const stageLogo = document.getElementById("stage-logo");
+    const stageTitle = document.getElementById("stage-title");
+    const bgCanvas = document.getElementById("bg-canvas");
+    const bgVideo = document.getElementById("bg-video");
+    const ctx = bgCanvas.getContext("2d");
+    let animTick = 0;
+
+    function applyStageState(data) {
+      if (!data) return;
+      currentConfig = data;
+
+      if (data.blackout) {
+        stageContainer.style.opacity = "0";
+        return;
+      } else {
+        stageContainer.style.opacity = "1";
+      }
+
+      const style = data.style || {};
+
+      if (style.bgDimmer !== undefined) {
+        bgDimmer.style.opacity = style.bgDimmer / 100;
+      }
+      if (style.bgOpacity !== undefined) {
+        bgCanvas.style.opacity = (style.bgOpacity / 100).toString();
+        bgVideo.style.opacity = (style.bgOpacity / 100).toString();
+      }
+
+      if (style.groupPosX !== undefined && style.groupPosY !== undefined) {
+        headerGroup.style.left = style.groupPosX + "%";
+        headerGroup.style.top = style.groupPosY + "%";
+      }
+      
+      stageTitle.innerText = style.groupTitle || "";
+      stageTitle.style.color = style.groupColor || "#ffffff";
+
+      if (style.groupLogo) {
+        stageLogo.src = style.groupLogo;
+        stageLogo.style.display = "inline-block";
+      } else {
+        stageLogo.style.display = "none";
+      }
+
+      lyricText.style.fontFamily = style.fontFamily || "Arial, sans-serif";
+      lyricText.style.fontSize = (style.fontSize || 64) + "px";
+      lyricText.style.color = style.fontColor || "#ffffff";
+
+      const align = style.textAlign || "center";
+      lyricContainer.style.justifyContent = align === "left" ? "flex-start" : (align === "right" ? "flex-end" : "center");
+      lyricText.style.textAlign = align;
+
+      const vert = style.textVertAlign || "center";
+      if (vert === "top") {
+        lyricContainer.style.alignItems = "flex-start";
+      } else if (vert === "bottom") {
+        lyricContainer.style.alignItems = "flex-end";
+      } else {
+        lyricContainer.style.alignItems = "center";
+      }
+
+      const nextText = data.activeLine !== undefined ? data.activeLine : "";
+      if (lyricText.innerText !== nextText) {
+        lyricText.style.opacity = "0";
+        setTimeout(() => {
+          lyricText.innerText = nextText;
+          lyricText.style.opacity = nextText ? "1" : "0";
+        }, 150);
+      }
+
+      if (style.bgType === "custom" && style.mediaData) {
+        bgCanvas.style.display = "none";
+        bgVideo.style.display = "block";
+        if (bgVideo.src !== style.mediaData) {
+          bgVideo.src = style.mediaData;
+          bgVideo.loop = style.mediaLoop !== false;
+          bgVideo.play().catch(() => {});
+        }
+      } else {
+        bgCanvas.style.display = "block";
+        bgVideo.style.display = "none";
+      }
+    }
+
+    function resizeStageCanvas() {
+      bgCanvas.width = window.innerWidth || 1920;
+      bgCanvas.height = window.innerHeight || 1080;
+    }
+    window.addEventListener("resize", resizeStageCanvas);
+
+    function drawFullPattern(t) {
+      if (!currentConfig || currentConfig.style?.bgType === "custom" || currentConfig.blackout) return;
+
+      const style = currentConfig.style || {};
+      const patternId = style.patternId || "floating-particles";
+      const colorHex = style.patternColor || "#38bdf8";
+      const speed = parseFloat(style.patternSpeed || 3);
+      const scale = parseFloat(style.patternScale || 50);
+
+      const width = bgCanvas.width;
+      const height = bgCanvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.save();
+      ctx.fillStyle = colorHex;
+      ctx.strokeStyle = colorHex;
+
+      const s = scale / 50;
+      const spd = speed * 0.02;
+
+      switch(patternId) {
+        case "floating-particles":
+        case "stardust":
+        case "dust-motes": {
+          const count = Math.floor(70 * s);
+          for (let i = 0; i < count; i++) {
+            const px = ((Math.sin(i * 99 + t * spd) * 0.5 + 0.5) * width);
+            const py = ((Math.cos(i * 33 + t * spd * 0.8) * 0.5 + 0.5) * height);
+            const rad = ((i % 4) + 1.5) * s;
+            ctx.beginPath();
+            ctx.arc(px, py, rad, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          break;
+        }
+
+        case "matrix-rain":
+        case "digital-noise": {
+          const cols = Math.floor(50 * s);
+          const colWidth = width / cols;
+          for (let i = 0; i < cols; i++) {
+            const dropY = ((t * spd * 160 + i * 55) % height);
+            ctx.fillRect(i * colWidth, dropY, 3 * s, 25 * s);
+          }
+          break;
+        }
+
+        case "stage-beams":
+        case "spotlight-sweep": {
+          const centerX = width / 2;
+          ctx.beginPath();
+          ctx.moveTo(centerX, 0);
+          const spread = Math.sin(t * spd) * (width * 0.45);
+          ctx.lineTo(centerX + spread - 160, height);
+          ctx.lineTo(centerX + spread + 160, height);
+          ctx.closePath();
+          ctx.globalAlpha = 0.28;
+          ctx.fill();
+          break;
+        }
+
+        case "laser-grid":
+        case "square-grid": {
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = 0.35;
+          const step = Math.max(25, 50 * s);
+          for (let x = 0; x < width; x += step) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+          }
+          const offset = (t * spd * 50) % step;
+          for (let y = offset; y < height; y += step) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+          }
+          break;
+        }
+
+        case "pulse-rings":
+        case "sound-ripples":
+        case "concentric-circles": {
+          ctx.lineWidth = 3 * s;
+          const maxR = Math.max(width, height) * 0.75;
+          for (let i = 0; i < 5; i++) {
+            const r = ((t * spd * 90 + i * (maxR / 5)) % maxR);
+            ctx.globalAlpha = Math.max(0, 1 - r / maxR);
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, r, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          break;
+        }
+
+        case "audio-waves":
+        case "sine-mesh":
+        case "aurora-waves": {
+          ctx.lineWidth = 3 * s;
+          for (let j = 0; j < 3; j++) {
+            ctx.beginPath();
+            ctx.globalAlpha = 0.6 - j * 0.15;
+            for (let x = 0; x <= width; x += 15) {
+              const y = (height / 2) + Math.sin(x * 0.008 * s + t * spd * 2 + j) * (50 * s);
+              if (x === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+          }
+          break;
+        }
+
+        case "diagonal-stripes":
+        case "subtle-stripes": {
+          ctx.lineWidth = 16 * s;
+          ctx.globalAlpha = 0.25;
+          const step = 56 * s;
+          const offset = (t * spd * 50) % step;
+          for (let x = -height + offset; x < width + height; x += step) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x + height, height);
+            ctx.stroke();
+          }
+          break;
+        }
+
+        case "honeycomb":
+        case "diamond-lattice": {
+          ctx.lineWidth = 2;
+          ctx.globalAlpha = 0.32;
+          const size = Math.max(25, 45 * s);
+          for (let y = 0; y < height + size; y += size * 1.5) {
+            for (let x = 0; x < width + size; x += size * 1.732) {
+              ctx.beginPath();
+              ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
+              ctx.stroke();
+            }
+          }
+          break;
+        }
+
+        case "warp-speed": {
+          const stars = 70;
+          ctx.lineWidth = 3 * s;
+          for (let i = 0; i < stars; i++) {
+            const angle = (i / stars) * Math.PI * 2;
+            const dist = ((t * spd * 120 + i * 25) % (width * 0.7));
+            const x1 = width/2 + Math.cos(angle) * dist;
+            const y1 = height/2 + Math.sin(angle) * dist;
+            const x2 = width/2 + Math.cos(angle) * (dist + 25 * s);
+            const y2 = height/2 + Math.sin(angle) * (dist + 25 * s);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+          }
+          break;
+        }
+
+        default: {
+          ctx.globalAlpha = 0.3;
+          const step = Math.max(30, 60 * s);
+          for (let x = 0; x < width; x += step) {
+            for (let y = 0; y < height; y += step) {
+              const rad = Math.abs(Math.sin((x + y + t * spd * 30) * 0.05)) * 6 * s;
+              ctx.beginPath();
+              ctx.arc(x, y, rad, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    function renderStageAnimation() {
+      animTick++;
+      drawFullPattern(animTick);
+      requestAnimationFrame(renderStageAnimation);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      resizeStageCanvas();
+      applyStageState(currentConfig); // Apply default view immediately
+      renderStageAnimation();
+    });
+  </script>
+</body>
+</html>
