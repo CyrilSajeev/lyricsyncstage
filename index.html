@@ -459,13 +459,15 @@
     }
     #pip-text-layer {
       position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
+      left: 0;
+      width: 100%;
       display: flex;
-      padding: 12px;
+      padding: 0 12px;
       font-weight: 700;
       pointer-events: none;
       word-break: break-word;
-      transition: opacity 0.2s ease;
+      transition: top 0.15s ease-out, opacity 0.2s ease;
+      transform: translateY(-50%); /* Accurate vertical offset anchor */
       z-index: 5;
     }
     .pip-overlay-dimmer {
@@ -729,7 +731,7 @@
           <div class="control-row">
             <span>Vert Align</span>
             <select id="text-vert-align-select">
-              <option value="center">Center</option>
+              <option value="center" selected>Center</option>
               <option value="top">Top</option>
               <option value="bottom">Bottom</option>
             </select>
@@ -738,7 +740,7 @@
           <div class="control-row">
             <span>Vertical Offset</span>
             <div class="slider-box">
-              <input type="range" id="text-pos-y-slider" min="0" max="100" value="50">
+              <input type="range" id="text-pos-y-slider" min="5" max="95" value="50">
               <span id="text-pos-y-val">50%</span>
             </div>
           </div>
@@ -770,7 +772,6 @@
             </div>
           </div>
 
-          <!-- 50 UNIQUE PROCEDURAL PATTERNS -->
           <div id="pattern-options" style="display:flex; flex-direction:column; gap:8px;">
             <div class="control-row">
               <span>Pattern (50)</span>
@@ -984,7 +985,7 @@
             #stage-header-group { position:absolute; display:flex; align-items:center; gap:12px; z-index:4; }
             #stage-logo { max-height:48px; max-width:140px; object-fit:contain; display:none; filter:drop-shadow(0 2px 8px rgba(0,0,0,0.9)); }
             #stage-title { font-size:24px; font-weight:700; text-transform:uppercase; text-shadow:0 2px 8px rgba(0,0,0,0.9); }
-            #lyric-container { position:absolute; top:0; left:0; width:100vw; height:100vh; padding:5vh 6vw; display:flex; z-index:5; }
+            #lyric-container { position:absolute; left:0; width:100vw; padding:0 6vw; display:flex; z-index:5; transform:translateY(-50%); transition:top 0.15s ease-out; }
             #lyric-text { font-weight:700; line-height:1.25; text-shadow:0 2px 6px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.9); transition:opacity 0.15s ease-in-out; word-break:break-word; max-width:100%; }
           </style>
         </head>
@@ -1068,14 +1069,14 @@
       lyricText.style.fontSize = state.style.fontSize + "px";
       lyricText.style.color = state.style.fontColor;
 
+      // Horizontal Alignment
       const align = state.style.textAlign || "center";
       lyricContainer.style.justifyContent = align === "left" ? "flex-start" : (align === "right" ? "flex-end" : "center");
       lyricText.style.textAlign = align;
 
-      const vert = state.style.textVertAlign || "center";
-      if (vert === "top") lyricContainer.style.alignItems = "flex-start";
-      else if (vert === "bottom") lyricContainer.style.alignItems = "flex-end";
-      else lyricContainer.style.alignItems = "center";
+      // Direct Precise Vertical Offset Handling
+      const offsetY = state.style.textPosY !== undefined ? state.style.textPosY : 50;
+      lyricContainer.style.top = `${offsetY}%`;
 
       const activeLine = (state.clearText || state.currentLineIndex === -1) 
         ? "" 
@@ -1230,7 +1231,7 @@
       }
     }
 
-    // Modal
+    // Modal Handlers
     const modal = document.getElementById("song-modal");
     document.getElementById("btn-open-add-modal").onclick = () => {
       editingSongId = null;
@@ -1394,6 +1395,7 @@
       syncAll();
     };
 
+    // Vertical Align Dropdown with Auto Slider Sync
     document.getElementById("text-vert-align-select").onchange = (e) => {
       state.style.textVertAlign = e.target.value;
       if (e.target.value === "top") state.style.textPosY = 15;
@@ -1405,6 +1407,7 @@
       syncAll();
     };
 
+    // Manual Vertical Offset Slider Handler
     document.getElementById("text-pos-y-slider").oninput = (e) => {
       state.style.textPosY = e.target.value;
       document.getElementById("text-pos-y-val").innerText = e.target.value + "%";
@@ -1452,7 +1455,7 @@
       syncAll();
     };
 
-    // Tabs
+    // Mobile Navigation Tabs
     const tabBtnLib = document.getElementById("tab-btn-library");
     const tabBtnStage = document.getElementById("tab-btn-stage");
     const tabBtnCtrl = document.getElementById("tab-btn-controls");
@@ -1482,7 +1485,7 @@
     tabBtnCtrl.onclick = () => switchMobileTab("controls");
 
     /* ========================================================
-       4. THE 50 UNIQUE PROCEDURAL MATHEMATICAL PATTERNS
+       4. PROCEDURAL CANVASES & RENDER LOOPS
        ======================================================== */
     const pipCanvas = document.getElementById("pip-canvas");
     const pipCtx = pipCanvas.getContext("2d");
@@ -1537,15 +1540,9 @@
         : (state.style.textAlign === "right" ? "flex-end" : "center");
       textLayer.style.textAlign = state.style.textAlign;
 
-      if (state.style.textVertAlign === "top") {
-        textLayer.style.alignItems = "flex-start";
-        textLayer.style.paddingTop = "10px";
-      } else if (state.style.textVertAlign === "bottom") {
-        textLayer.style.alignItems = "flex-end";
-        textLayer.style.paddingBottom = "10px";
-      } else {
-        textLayer.style.alignItems = "center";
-      }
+      // Vertical Offset Position Map for PiP Preview
+      const offsetY = state.style.textPosY !== undefined ? state.style.textPosY : 50;
+      textLayer.style.top = `${offsetY}%`;
 
       if (state.clearText) {
         textLayer.innerText = "";
@@ -1567,7 +1564,7 @@
       }
     }
 
-    /* Rendering Master: 50 Explicit Algorithms */
+    /* 50 Explicit Mathematical Patterns */
     function drawProceduralPattern(ctx, w, h, t, patternId, colorHex, speed, scale) {
       ctx.clearRect(0, 0, w, h);
       ctx.save();
@@ -1578,7 +1575,6 @@
       const spd = speed * 0.02;
 
       switch(patternId) {
-        // 01. Floating Glowing Orbs
         case "floating-orbs": {
           const count = Math.floor(25 * sc);
           for (let i = 0; i < count; i++) {
@@ -1593,7 +1589,6 @@
           break;
         }
 
-        // 02. Falling Soft Snow
         case "falling-snow": {
           const count = Math.floor(60 * sc);
           for (let i = 0; i < count; i++) {
@@ -1607,7 +1602,6 @@
           break;
         }
 
-        // 03. Matrix Code Stream
         case "matrix-stream": {
           const cols = Math.floor(40 * sc);
           const colW = w / cols;
@@ -1620,7 +1614,6 @@
           break;
         }
 
-        // 04. Stardust Cosmic Drift
         case "stardust-drift": {
           const stars = Math.floor(90 * sc);
           for (let i = 0; i < stars; i++) {
@@ -1632,7 +1625,6 @@
           break;
         }
 
-        // 05. Flickering Fireflies
         case "fireflies": {
           const count = Math.floor(30 * sc);
           for (let i = 0; i < count; i++) {
@@ -1646,7 +1638,6 @@
           break;
         }
 
-        // 06. Warp Speed Hyperdrive
         case "warp-speed": {
           const stars = 50;
           ctx.lineWidth = 2 * sc;
@@ -1662,7 +1653,6 @@
           break;
         }
 
-        // 07. Ascending Bubbles
         case "bubbles": {
           const count = Math.floor(35 * sc);
           ctx.lineWidth = 1.5 * sc;
@@ -1678,7 +1668,6 @@
           break;
         }
 
-        // 08. Orbiting Dual Sparks
         case "orbiting-sparks": {
           ctx.lineWidth = 2;
           for (let k = 0; k < 6; k++) {
@@ -1693,7 +1682,6 @@
           break;
         }
 
-        // 09. Slow Stage Confetti
         case "confetti": {
           const count = Math.floor(45 * sc);
           for (let i = 0; i < count; i++) {
@@ -1709,7 +1697,6 @@
           break;
         }
 
-        // 10. Deep Nebula Glow Drift
         case "nebula-drift": {
           for (let i = 0; i < 4; i++) {
             const x = w/2 + Math.sin(t * spd * 0.5 + i) * (w * 0.25);
@@ -1724,7 +1711,6 @@
           break;
         }
 
-        // 11. Sweeping Stage Beams
         case "stage-beams": {
           const centerX = w / 2;
           ctx.globalAlpha = 0.25;
@@ -1740,7 +1726,6 @@
           break;
         }
 
-        // 12. 3D Retro Laser Floor
         case "laser-floor": {
           ctx.lineWidth = 1.5 * sc;
           ctx.globalAlpha = 0.4;
@@ -1762,7 +1747,6 @@
           break;
         }
 
-        // 13. Concentric Audio Pulses
         case "pulse-rings": {
           ctx.lineWidth = 3 * sc;
           const maxR = Math.max(w, h) * 0.7;
@@ -1776,7 +1760,6 @@
           break;
         }
 
-        // 14. Multi Sine Equalizer
         case "sine-equalizer": {
           ctx.lineWidth = 2.5 * sc;
           for (let layer = 0; layer < 4; layer++) {
@@ -1792,7 +1775,6 @@
           break;
         }
 
-        // 15. 3D Cyber Perspective Tunnel
         case "cyber-tunnel": {
           ctx.lineWidth = 2 * sc;
           const rings = 8;
@@ -1811,7 +1793,6 @@
           break;
         }
 
-        // 16. Rotary Spotlight Sweep
         case "spotlight-sweep": {
           const ang = t * spd * 2;
           ctx.beginPath();
@@ -1823,7 +1804,6 @@
           break;
         }
 
-        // 17. Hypnotic Swirl Vortex
         case "hypnotic-vortex": {
           ctx.lineWidth = 2 * sc;
           ctx.globalAlpha = 0.35;
@@ -1839,7 +1819,6 @@
           break;
         }
 
-        // 18. Radar Scanner Sweep
         case "radar-scanner": {
           const sweepAng = t * spd * 3;
           ctx.lineWidth = 1.5;
@@ -1854,7 +1833,6 @@
           break;
         }
 
-        // 19. Vertical Stage Blinds
         case "vertical-blinds": {
           const cols = 20;
           const colW = w / cols;
@@ -1865,7 +1843,6 @@
           break;
         }
 
-        // 20. Floating 3D Prisms
         case "floating-prisms": {
           ctx.lineWidth = 1.5 * sc;
           ctx.globalAlpha = 0.45;
@@ -1881,7 +1858,6 @@
           break;
         }
 
-        // 21. Pulsing Dot Matrix
         case "dot-matrix": {
           const step = Math.max(16, 28 * sc);
           for (let x = step/2; x < w; x += step) {
@@ -1896,7 +1872,6 @@
           break;
         }
 
-        // 22. Minimal Wireframe Grid
         case "wireframe-grid": {
           ctx.lineWidth = 1;
           ctx.globalAlpha = 0.25;
@@ -1910,7 +1885,6 @@
           break;
         }
 
-        // 23. Angled Diagonal Stripes
         case "diagonal-stripes": {
           ctx.lineWidth = 12 * sc;
           ctx.globalAlpha = 0.25;
@@ -1925,7 +1899,6 @@
           break;
         }
 
-        // 24. Hexagonal Honeycomb
         case "honeycomb": {
           ctx.lineWidth = 1.5;
           ctx.globalAlpha = 0.35;
@@ -1951,7 +1924,6 @@
           break;
         }
 
-        // 25. Isometric 3D Cube Mesh
         case "isometric-cubes": {
           ctx.lineWidth = 1;
           ctx.globalAlpha = 0.3;
@@ -1968,7 +1940,6 @@
           break;
         }
 
-        // 26. Chevron Arrow Flow
         case "chevron-flow": {
           ctx.lineWidth = 3 * sc;
           ctx.globalAlpha = 0.35;
@@ -1984,7 +1955,6 @@
           break;
         }
 
-        // 27. Houndstooth Tessellation
         case "houndstooth": {
           ctx.globalAlpha = 0.22;
           const sz = Math.max(16, 32 * sc);
@@ -2001,7 +1971,6 @@
           break;
         }
 
-        // 28. Technical Crosshatching
         case "crosshatch": {
           ctx.lineWidth = 1;
           ctx.globalAlpha = 0.28;
@@ -2013,7 +1982,6 @@
           break;
         }
 
-        // 29. Target Reticle Rings
         case "target-rings": {
           ctx.lineWidth = 2 * sc;
           ctx.globalAlpha = 0.35;
@@ -2029,7 +1997,6 @@
           break;
         }
 
-        // 30. Diamond Lattice Mesh
         case "diamond-lattice": {
           ctx.lineWidth = 1.5;
           ctx.globalAlpha = 0.3;
@@ -2048,7 +2015,6 @@
           break;
         }
 
-        // 31. Harmonic Lissajous Curves
         case "lissajous-curves": {
           ctx.lineWidth = 2 * sc;
           ctx.globalAlpha = 0.5;
@@ -2063,7 +2029,6 @@
           break;
         }
 
-        // 32. Topographic Contour Map
         case "topographic-map": {
           ctx.lineWidth = 1.5;
           for (let layer = 1; layer <= 6; layer++) {
@@ -2082,7 +2047,6 @@
           break;
         }
 
-        // 33. Multi Aurora Curtains
         case "aurora-curtains": {
           for (let c = 0; c < 3; c++) {
             ctx.globalAlpha = 0.22;
@@ -2099,7 +2063,6 @@
           break;
         }
 
-        // 34. Neon Energy Ribbons
         case "neon-strands": {
           ctx.lineWidth = 3 * sc;
           for (let i = 0; i < 3; i++) {
@@ -2115,7 +2078,6 @@
           break;
         }
 
-        // 35. Liquid Sine Surface
         case "liquid-surface": {
           ctx.globalAlpha = 0.35;
           ctx.beginPath();
@@ -2130,7 +2092,6 @@
           break;
         }
 
-        // 36. Dual-Axis Harmonograph
         case "harmonograph": {
           ctx.lineWidth = 1.5;
           ctx.globalAlpha = 0.45;
@@ -2146,7 +2107,6 @@
           break;
         }
 
-        // 37. 3D Wireframe Terrain
         case "terrain-wireframe": {
           ctx.lineWidth = 1;
           ctx.globalAlpha = 0.35;
@@ -2164,7 +2124,6 @@
           break;
         }
 
-        // 38. Digital Frequency Bars
         case "frequency-bars": {
           const bars = Math.floor(32 * sc);
           const barW = w / bars;
@@ -2176,7 +2135,6 @@
           break;
         }
 
-        // 39. Ambient Stage Fog Drift
         case "ambient-fog": {
           for (let f = 0; f < 5; f++) {
             const py = h * 0.3 + (f * h * 0.15);
@@ -2188,7 +2146,6 @@
           break;
         }
 
-        // 40. Vector Directional Flow
         case "vector-field": {
           ctx.lineWidth = 1.5;
           ctx.globalAlpha = 0.35;
@@ -2205,7 +2162,6 @@
           break;
         }
 
-        // 41. Carbon Fiber Twill
         case "carbon-twill": {
           ctx.globalAlpha = 0.25;
           const sz = 8 * sc;
@@ -2218,7 +2174,6 @@
           break;
         }
 
-        // 42. Microchip Circuit Traces
         case "circuit-traces": {
           ctx.lineWidth = 2 * sc;
           ctx.globalAlpha = 0.4;
@@ -2237,7 +2192,6 @@
           break;
         }
 
-        // 43. Architectural Blueprint Grid
         case "blueprint-grid": {
           ctx.lineWidth = 1;
           ctx.globalAlpha = 0.2;
@@ -2255,7 +2209,6 @@
           break;
         }
 
-        // 44. Retro TV Noise Static
         case "static-noise": {
           ctx.globalAlpha = 0.18;
           for (let i = 0; i < 400; i++) {
@@ -2266,7 +2219,6 @@
           break;
         }
 
-        // 45. Shifting Pixel Mosaic
         case "pixel-mosaic": {
           const sz = 24 * sc;
           for (let x = 0; x < w; x += sz) {
@@ -2279,7 +2231,6 @@
           break;
         }
 
-        // 46. Halftone Radial Fade
         case "halftone-radial": {
           const step = 25 * sc;
           for (let x = 0; x < w; x += step) {
@@ -2298,7 +2249,6 @@
           break;
         }
 
-        // 47. Radiant Sunburst Rays
         case "sunburst-rays": {
           const rays = 24;
           const angStep = (Math.PI * 2) / rays;
@@ -2313,7 +2263,6 @@
           break;
         }
 
-        // 48. 6-Fold Dynamic Kaleidoscope
         case "kaleidoscope": {
           ctx.lineWidth = 2 * sc;
           ctx.globalAlpha = 0.45;
@@ -2332,7 +2281,6 @@
           break;
         }
 
-        // 49. Sacred Metatron Stars
         case "sacred-geometry": {
           ctx.lineWidth = 1.5;
           ctx.globalAlpha = 0.4;
@@ -2353,7 +2301,6 @@
           break;
         }
 
-        // 50. Spiral DNA Double Helix
         case "dna-helix": {
           ctx.lineWidth = 2 * sc;
           const points = 35;
@@ -2381,7 +2328,6 @@
       ctx.restore();
     }
 
-    /* Animation Loop */
     function animatePipAndStage() {
       animTick++;
 
