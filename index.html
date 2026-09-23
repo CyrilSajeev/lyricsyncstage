@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Concert Stage - Lyric Master Dashboard</title>
-  <!-- Real-time Cloud Sync Library -->
-  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <title>LyricsSync Pro - Single Stage Presentation Engine</title>
   <style>
     :root {
       --bg-dark: #0f1117;
@@ -41,7 +39,7 @@
       flex-direction: column;
     }
 
-    /* Top Bar */
+    /* Top Navigation & Presenting Bar */
     header.top-bar {
       min-height: 56px;
       background: var(--panel-bg);
@@ -118,52 +116,41 @@
       width: 70px;
     }
 
-    /* Top-Right Code & Copy Cluster */
-    .uid-container {
+    /* Presentation Toggle Cluster */
+    .present-cluster {
       display: flex;
       align-items: center;
-      gap: 8px;
-      background: #111827;
-      border: 1px solid #374151;
-      padding: 4px 10px;
-      border-radius: 6px;
+      gap: 10px;
       flex-shrink: 0;
     }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #eab308;
-      display: inline-block;
-    }
-    .status-dot.online { background: #10b981; }
-    .uid-title {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-dim);
-    }
-    .uid-value {
-      font-family: monospace;
-      font-size: 15px;
-      font-weight: 700;
-      color: #38bdf8;
-      letter-spacing: 2px;
-    }
-    .btn-copy-code {
-      background: #1f293d;
-      border: 1px solid #3b82f6;
-      color: #93c5fd;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .btn-copy-code:hover { background: #2563eb; color: #fff; }
 
-    /* Main Workspace */
+    .btn-present {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-start {
+      background: #10b981;
+      color: #000;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+    .btn-start:hover { background: #059669; color: #fff; }
+    .btn-end {
+      background: #ef4444;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+      display: none;
+    }
+    .btn-end:hover { background: #dc2626; }
+
+    /* Workspace */
     main.workspace {
       flex: 1;
       display: grid;
@@ -287,7 +274,7 @@
       text-decoration: none;
     }
 
-    /* Center Stage */
+    /* Center Teleprompter Matrix */
     .center-stage {
       display: flex;
       flex-direction: column;
@@ -629,12 +616,14 @@
       </label>
     </div>
 
-    <!-- 6-Digit Code with Dedicated Copy Button -->
-    <div class="uid-container">
-      <span class="status-dot" id="cloud-status"></span>
-      <span class="uid-title">Stage Code</span>
-      <span class="uid-value" id="device-uid-val">------</span>
-      <button class="btn-copy-code" id="btn-copy-code" title="Copy Stage Code">Copy Code</button>
+    <!-- Presentation Action Buttons -->
+    <div class="present-cluster">
+      <button class="btn-present btn-start" id="btn-start-present">
+        <span>&#9654;</span> Start Presenting
+      </button>
+      <button class="btn-present btn-end" id="btn-end-present">
+        <span>&#9632;</span> End Presenting
+      </button>
     </div>
   </header>
 
@@ -718,8 +707,8 @@
           <div class="control-row">
             <span>Font Size</span>
             <div class="slider-box">
-              <input type="range" id="font-size-slider" min="20" max="120" value="64">
-              <span id="font-size-val">64px</span>
+              <input type="range" id="font-size-slider" min="20" max="140" value="72">
+              <span id="font-size-val">72px</span>
             </div>
           </div>
 
@@ -914,60 +903,15 @@
   </div>
 
   <script>
-    function getOrCreatePersistentUID() {
-      let uid = localStorage.getItem("stage_device_6digit_uid");
-      if (!uid || uid.length !== 6) {
-        uid = Math.floor(100000 + Math.random() * 900000).toString();
-        localStorage.setItem("stage_device_6digit_uid", uid);
-      }
-      return uid;
-    }
-
-    const DEVICE_UID = getOrCreatePersistentUID();
-    document.getElementById("device-uid-val").innerText = DEVICE_UID;
-    const syncChannel = new BroadcastChannel(`stage_channel_${DEVICE_UID}`);
-
-    // Setup Copy Code Button
-    const btnCopy = document.getElementById("btn-copy-code");
-    btnCopy.onclick = () => {
-      navigator.clipboard.writeText(DEVICE_UID).then(() => {
-        btnCopy.innerText = "Copied!";
-        btnCopy.style.background = "#10b981";
-        btnCopy.style.borderColor = "#10b981";
-        btnCopy.style.color = "#000";
-        setTimeout(() => {
-          btnCopy.innerText = "Copy Code";
-          btnCopy.style.background = "#1f293d";
-          btnCopy.style.borderColor = "#3b82f6";
-          btnCopy.style.color = "#93c5fd";
-        }, 2000);
-      });
-    };
-
-    // Public WebSocket Broker for Real-time Stage Cloud Sync
-    const mqttClient = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
-    const mqttTopic = `concert_stage_live_${DEVICE_UID}`;
-    const cloudStatus = document.getElementById("cloud-status");
-
-    mqttClient.on("connect", () => {
-      cloudStatus.classList.add("online");
-      broadcastState();
-
-      // Continuous heartbeat ping so Output can verify this stage port is actively open
-      setInterval(() => {
-        if (mqttClient.connected) {
-          mqttClient.publish(`concert_stage_ping_${DEVICE_UID}`, JSON.stringify({ active: true, time: Date.now() }), { qos: 0, retain: true });
-        }
-      }, 3000);
-    });
-
+    /* ========================================================
+       1. GLOBAL STATE
+       ======================================================== */
     const state = {
-      uid: DEVICE_UID,
-      songs: JSON.parse(localStorage.getItem(`songs_${DEVICE_UID}`)) || [
+      songs: JSON.parse(localStorage.getItem(`lyricsync_songs`)) || [
         {
           id: "default-1",
-          title: "Sample Stage Song",
-          lyrics: "[Verse 1]\nWelcome to the live concert\nLook up to the stage\nLet the sound take over\n\n[Chorus]\nWe are singing under bright lights\nFeel the energy alive\nEvery heart beats together\n\n[Outro]\nThank you and goodnight"
+          title: "Sample Concert Anthem",
+          lyrics: "[Intro]\nWelcome everyone\nLift your voices up\n\n[Verse 1]\nUnder the stadium lights tonight\nWe stand together side by side\nEvery rhythm starts to fly\n\n[Chorus]\nSing it loud across the floor\nHigher than we were before\nFeel the heartbeat through the stage\n\n[Outro]\nThank you and goodnight"
         }
       ],
       currentSongId: null,
@@ -977,7 +921,7 @@
       clearText: false,
       style: {
         fontFamily: "Arial, sans-serif",
-        fontSize: 64,
+        fontSize: 72,
         fontColor: "#ffffff",
         textAlign: "center",
         textVertAlign: "center",
@@ -1000,63 +944,195 @@
       }
     };
 
+    let presentationWindow = null;
     let editingSongId = null;
 
-    function broadcastState() {
-      const activeLineText = (state.clearText || state.blackout || state.currentLineIndex === -1) 
+    /* ========================================================
+       2. START / END PRESENTING WINDOW ENGINE (0ms Latency)
+       ======================================================== */
+    const btnStartPresent = document.getElementById("btn-start-present");
+    const btnEndPresent = document.getElementById("btn-end-present");
+
+    btnStartPresent.onclick = () => {
+      // Calculate dual monitor positioning if available
+      const dualScreenLeft = window.screen.availLeft || 0;
+      const dualScreenTop = window.screen.availTop || 0;
+      
+      // Open a clean blank window to present
+      presentationWindow = window.open(
+        "", 
+        "StageOutputWindow", 
+        `width=${screen.width},height=${screen.height},left=${dualScreenLeft},top=${dualScreenTop},menubar=no,toolbar=no,location=no,status=no,resizable=yes`
+      );
+
+      if (!presentationWindow) {
+        alert("Pop-up blocked! Please allow pop-ups in your browser settings to launch the presentation screen.");
+        return;
+      }
+
+      // Inject full stage output HTML structure directly
+      presentationWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Stage LED Wall Output</title>
+          <style>
+            * { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+            body, html { width:100vw; height:100vh; overflow:hidden; background:#000; font-family:Arial,sans-serif; }
+            #stage-box { position:relative; width:100vw; height:100vh; background:#000; transition:opacity 0.2s ease; }
+            #bg-canvas { position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; }
+            #bg-video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:1; display:none; }
+            #bg-dimmer { position:absolute; top:0; left:0; width:100%; height:100%; background:#000; opacity:0.3; z-index:2; }
+            #stage-header-group { position:absolute; display:flex; align-items:center; gap:12px; z-index:4; }
+            #stage-logo { max-height:48px; max-width:140px; object-fit:contain; display:none; filter:drop-shadow(0 2px 8px rgba(0,0,0,0.9)); }
+            #stage-title { font-size:24px; font-weight:700; text-transform:uppercase; text-shadow:0 2px 8px rgba(0,0,0,0.9); }
+            #lyric-container { position:absolute; top:0; left:0; width:100vw; height:100vh; padding:5vh 6vw; display:flex; z-index:5; }
+            #lyric-text { font-weight:700; line-height:1.25; text-shadow:0 2px 6px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.9); transition:opacity 0.15s ease-in-out; word-break:break-word; max-width:100%; }
+          </style>
+        </head>
+        <body>
+          <div id="stage-box">
+            <canvas id="bg-canvas"></canvas>
+            <video id="bg-video" muted playsinline></video>
+            <div id="bg-dimmer"></div>
+            <div id="stage-header-group">
+              <img id="stage-logo" alt="Stage Logo">
+              <span id="stage-title"></span>
+            </div>
+            <div id="lyric-container">
+              <span id="lyric-text">STAGE READY</span>
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
+
+      presentationWindow.document.close();
+
+      // Hook up full screen request
+      presentationWindow.onload = () => {
+        const docEl = presentationWindow.document.documentElement;
+        if (docEl.requestFullscreen) docEl.requestFullscreen().catch(() => {});
+      };
+
+      // Toggle buttons
+      btnStartPresent.style.display = "none";
+      btnEndPresent.style.display = "flex";
+
+      // Detect if window is closed manually by user
+      const checkTimer = setInterval(() => {
+        if (!presentationWindow || presentationWindow.closed) {
+          clearInterval(checkTimer);
+          btnStartPresent.style.display = "flex";
+          btnEndPresent.style.display = "none";
+          presentationWindow = null;
+        }
+      }, 800);
+
+      updatePresentationWindow();
+    };
+
+    btnEndPresent.onclick = () => {
+      if (presentationWindow && !presentationWindow.closed) {
+        presentationWindow.close();
+      }
+      presentationWindow = null;
+      btnStartPresent.style.display = "flex";
+      btnEndPresent.style.display = "none";
+    };
+
+    /* Synchronize Output Directly */
+    function updatePresentationWindow() {
+      if (!presentationWindow || presentationWindow.closed) return;
+
+      const pDoc = presentationWindow.document;
+      const stageBox = pDoc.getElementById("stage-box");
+      const bgCanvas = pDoc.getElementById("bg-canvas");
+      const bgVideo = pDoc.getElementById("bg-video");
+      const bgDimmer = pDoc.getElementById("bg-dimmer");
+      const headerGroup = pDoc.getElementById("stage-header-group");
+      const stageLogo = pDoc.getElementById("stage-logo");
+      const stageTitle = pDoc.getElementById("stage-title");
+      const lyricContainer = pDoc.getElementById("lyric-container");
+      const lyricText = pDoc.getElementById("lyric-text");
+
+      if (!stageBox || !lyricText) return;
+
+      // Blackout
+      stageBox.style.opacity = state.blackout ? "0" : "1";
+
+      // Dimmer & Opacity
+      bgDimmer.style.opacity = state.style.bgDimmer / 100;
+      bgCanvas.style.opacity = (state.style.bgOpacity / 100).toString();
+      bgVideo.style.opacity = (state.style.bgOpacity / 100).toString();
+
+      // Header logo & title
+      headerGroup.style.left = state.style.groupPosX + "%";
+      headerGroup.style.top = state.style.groupPosY + "%";
+      stageTitle.innerText = state.style.groupTitle || "";
+      stageTitle.style.color = state.style.groupColor || "#ffffff";
+
+      if (state.style.groupLogo) {
+        stageLogo.src = state.style.groupLogo;
+        stageLogo.style.display = "inline-block";
+      } else {
+        stageLogo.style.display = "none";
+      }
+
+      // Font styling
+      lyricText.style.fontFamily = state.style.fontFamily;
+      lyricText.style.fontSize = state.style.fontSize + "px";
+      lyricText.style.color = state.style.fontColor;
+
+      // Alignment
+      const align = state.style.textAlign || "center";
+      lyricContainer.style.justifyContent = align === "left" ? "flex-start" : (align === "right" ? "flex-end" : "center");
+      lyricText.style.textAlign = align;
+
+      const vert = state.style.textVertAlign || "center";
+      if (vert === "top") lyricContainer.style.alignItems = "flex-start";
+      else if (vert === "bottom") lyricContainer.style.alignItems = "flex-end";
+      else lyricContainer.style.alignItems = "center";
+
+      // Active line
+      const activeLine = (state.clearText || state.currentLineIndex === -1) 
         ? "" 
         : (state.lines[state.currentLineIndex]?.text || "STAGE READY");
 
-      const payload = {
-        uid: state.uid,
-        activeLine: activeLineText,
-        blackout: state.blackout,
-        style: state.style,
-        timestamp: Date.now()
-      };
-
-      const payloadStr = JSON.stringify(payload);
-      syncChannel.postMessage(payload);
-      localStorage.setItem(`stage_payload_${DEVICE_UID}`, payloadStr);
-
-      if (mqttClient && mqttClient.connected) {
-        mqttClient.publish(mqttTopic, payloadStr, { qos: 0, retain: true });
-        mqttClient.publish(`concert_stage_ping_${DEVICE_UID}`, JSON.stringify({ active: true, time: Date.now() }), { qos: 0, retain: true });
+      if (lyricText.innerText !== activeLine) {
+        lyricText.style.opacity = "0";
+        setTimeout(() => {
+          lyricText.innerText = activeLine;
+          lyricText.style.opacity = activeLine ? "1" : "0";
+        }, 120);
       }
 
+      // Video media handling
+      if (state.style.bgType === "custom" && state.style.mediaData) {
+        bgCanvas.style.display = "none";
+        bgVideo.style.display = "block";
+        if (bgVideo.src !== state.style.mediaData) {
+          bgVideo.src = state.style.mediaData;
+          bgVideo.loop = state.style.mediaLoop !== false;
+          bgVideo.play().catch(() => {});
+        }
+      } else {
+        bgCanvas.style.display = "block";
+        bgVideo.style.display = "none";
+      }
+    }
+
+    /* Broadcast Central State Update */
+    function syncAll() {
       renderPiP();
+      updatePresentationWindow();
     }
 
-    const tabBtnLib = document.getElementById("tab-btn-library");
-    const tabBtnStage = document.getElementById("tab-btn-stage");
-    const tabBtnCtrl = document.getElementById("tab-btn-controls");
-    const viewLib = document.getElementById("view-library");
-    const viewStage = document.getElementById("view-stage");
-    const viewCtrl = document.getElementById("view-controls");
-
-    function switchMobileTab(viewName) {
-      [viewLib, viewStage, viewCtrl].forEach(el => el.classList.remove("active-view"));
-      [tabBtnLib, tabBtnStage, tabBtnCtrl].forEach(el => el.classList.remove("active"));
-
-      if (viewName === "library") {
-        viewLib.classList.add("active-view");
-        tabBtnLib.classList.add("active");
-      } else if (viewName === "stage") {
-        viewStage.classList.add("active-view");
-        tabBtnStage.classList.add("active");
-      } else if (viewName === "controls") {
-        viewCtrl.classList.add("active-view");
-        tabBtnCtrl.classList.add("active");
-        resizePipCanvas();
-      }
-    }
-
-    tabBtnLib.onclick = () => switchMobileTab("library");
-    tabBtnStage.onclick = () => switchMobileTab("stage");
-    tabBtnCtrl.onclick = () => switchMobileTab("controls");
-
+    /* ========================================================
+       3. SONG REPOSITORY & PARSING
+       ======================================================== */
     function saveSongs() {
-      localStorage.setItem(`songs_${DEVICE_UID}`, JSON.stringify(state.songs));
+      localStorage.setItem(`lyricsync_songs`, JSON.stringify(state.songs));
       renderSongList();
     }
 
@@ -1090,7 +1166,7 @@
       renderSongList();
       renderJumpChips();
       renderMatrix();
-      broadcastState();
+      syncAll();
 
       if (window.innerWidth <= 900) switchMobileTab("stage");
     }
@@ -1166,7 +1242,7 @@
       state.currentLineIndex = index;
       state.clearText = false;
       renderMatrix();
-      broadcastState();
+      syncAll();
 
       const rows = document.querySelectorAll(".lyric-row");
       if (rows[index]) {
@@ -1174,6 +1250,7 @@
       }
     }
 
+    // Modal
     const modal = document.getElementById("song-modal");
     document.getElementById("btn-open-add-modal").onclick = () => {
       editingSongId = null;
@@ -1233,11 +1310,12 @@
       }
     };
 
+    // Backup & Restore
     document.getElementById("btn-export").onclick = () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.songs));
       const anchor = document.createElement('a');
       anchor.setAttribute("href", dataStr);
-      anchor.setAttribute("download", `stage_lyrics_${DEVICE_UID}.json`);
+      anchor.setAttribute("download", `lyricsync_backup.json`);
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
@@ -1262,16 +1340,17 @@
       reader.readAsText(file);
     };
 
+    // Panic Triggers
     document.getElementById("btn-panic-clear").onclick = () => {
       state.clearText = !state.clearText;
       document.getElementById("btn-panic-clear").innerText = state.clearText ? "Restore Text" : "Clear Text";
-      broadcastState();
+      syncAll();
     };
 
     document.getElementById("btn-panic-blackout").onclick = () => {
       state.blackout = !state.blackout;
       document.getElementById("btn-panic-blackout").innerText = state.blackout ? "Restore Display" : "Blackout";
-      broadcastState();
+      syncAll();
     };
 
     function stepLine(direction) {
@@ -1296,42 +1375,43 @@
       }
     });
 
+    // Style Handlers
     document.getElementById("logo-input").onchange = (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (ev) => {
         state.style.groupLogo = ev.target.result;
-        broadcastState();
+        syncAll();
       };
       reader.readAsDataURL(file);
     };
 
-    document.getElementById("title-text-input").oninput = (e) => { state.style.groupTitle = e.target.value; broadcastState(); };
-    document.getElementById("title-color-input").oninput = (e) => { state.style.groupColor = e.target.value; broadcastState(); };
+    document.getElementById("title-text-input").oninput = (e) => { state.style.groupTitle = e.target.value; syncAll(); };
+    document.getElementById("title-color-input").oninput = (e) => { state.style.groupColor = e.target.value; syncAll(); };
 
     document.getElementById("group-pos-x").oninput = (e) => {
       state.style.groupPosX = e.target.value;
       document.getElementById("group-pos-x-val").innerText = e.target.value + "%";
-      broadcastState();
+      syncAll();
     };
     document.getElementById("group-pos-y").oninput = (e) => {
       state.style.groupPosY = e.target.value;
       document.getElementById("group-pos-y-val").innerText = e.target.value + "%";
-      broadcastState();
+      syncAll();
     };
 
-    document.getElementById("font-family-select").onchange = (e) => { state.style.fontFamily = e.target.value; broadcastState(); };
+    document.getElementById("font-family-select").onchange = (e) => { state.style.fontFamily = e.target.value; syncAll(); };
     document.getElementById("font-size-slider").oninput = (e) => {
       state.style.fontSize = e.target.value;
       document.getElementById("font-size-val").innerText = e.target.value + "px";
-      broadcastState();
+      syncAll();
     };
-    document.getElementById("font-color-picker").oninput = (e) => { state.style.fontColor = e.target.value; broadcastState(); };
+    document.getElementById("font-color-picker").oninput = (e) => { state.style.fontColor = e.target.value; syncAll(); };
 
     document.getElementById("text-align-select").onchange = (e) => {
       state.style.textAlign = e.target.value;
-      broadcastState();
+      syncAll();
     };
 
     document.getElementById("text-vert-align-select").onchange = (e) => {
@@ -1342,38 +1422,38 @@
 
       document.getElementById("text-pos-y-slider").value = state.style.textPosY;
       document.getElementById("text-pos-y-val").innerText = state.style.textPosY + "%";
-      broadcastState();
+      syncAll();
     };
 
     document.getElementById("text-pos-y-slider").oninput = (e) => {
       state.style.textPosY = e.target.value;
       document.getElementById("text-pos-y-val").innerText = e.target.value + "%";
-      broadcastState();
+      syncAll();
     };
 
     document.getElementById("bg-opacity-slider").oninput = (e) => {
       state.style.bgOpacity = e.target.value;
       document.getElementById("bg-opacity-val").innerText = e.target.value + "%";
-      broadcastState();
+      syncAll();
     };
 
     document.getElementById("bg-dimmer-slider").oninput = (e) => {
       state.style.bgDimmer = e.target.value;
       document.getElementById("bg-dimmer-val").innerText = e.target.value + "%";
-      broadcastState();
+      syncAll();
     };
 
     document.getElementById("bg-type-select").onchange = (e) => {
       state.style.bgType = e.target.value;
       document.getElementById("pattern-options").style.display = e.target.value === "pattern" ? "flex" : "none";
       document.getElementById("custom-media-options").style.display = e.target.value === "custom" ? "flex" : "none";
-      broadcastState();
+      syncAll();
     };
 
-    document.getElementById("pattern-select").onchange = (e) => { state.style.patternId = e.target.value; broadcastState(); };
-    document.getElementById("pattern-color").oninput = (e) => { state.style.patternColor = e.target.value; broadcastState(); };
-    document.getElementById("pattern-speed").oninput = (e) => { state.style.patternSpeed = e.target.value; broadcastState(); };
-    document.getElementById("pattern-scale").oninput = (e) => { state.style.patternScale = e.target.value; broadcastState(); };
+    document.getElementById("pattern-select").onchange = (e) => { state.style.patternId = e.target.value; syncAll(); };
+    document.getElementById("pattern-color").oninput = (e) => { state.style.patternColor = e.target.value; syncAll(); };
+    document.getElementById("pattern-speed").oninput = (e) => { state.style.patternSpeed = e.target.value; syncAll(); };
+    document.getElementById("pattern-scale").oninput = (e) => { state.style.patternScale = e.target.value; syncAll(); };
 
     document.getElementById("media-file-input").onchange = (e) => {
       const file = e.target.files[0];
@@ -1382,16 +1462,48 @@
       const reader = new FileReader();
       reader.onload = (ev) => {
         state.style.mediaData = ev.target.result;
-        broadcastState();
+        syncAll();
       };
       reader.readAsDataURL(file);
     };
 
     document.getElementById("media-loop-check").onchange = (e) => {
       state.style.mediaLoop = e.target.checked;
-      broadcastState();
+      syncAll();
     };
 
+    // Mobile Navigation Tabs
+    const tabBtnLib = document.getElementById("tab-btn-library");
+    const tabBtnStage = document.getElementById("tab-btn-stage");
+    const tabBtnCtrl = document.getElementById("tab-btn-controls");
+    const viewLib = document.getElementById("view-library");
+    const viewStage = document.getElementById("view-stage");
+    const viewCtrl = document.getElementById("view-controls");
+
+    function switchMobileTab(viewName) {
+      [viewLib, viewStage, viewCtrl].forEach(el => el.classList.remove("active-view"));
+      [tabBtnLib, tabBtnStage, tabBtnCtrl].forEach(el => el.classList.remove("active"));
+
+      if (viewName === "library") {
+        viewLib.classList.add("active-view");
+        tabBtnLib.classList.add("active");
+      } else if (viewName === "stage") {
+        viewStage.classList.add("active-view");
+        tabBtnStage.classList.add("active");
+      } else if (viewName === "controls") {
+        viewCtrl.classList.add("active-view");
+        tabBtnCtrl.classList.add("active");
+        resizePipCanvas();
+      }
+    }
+
+    tabBtnLib.onclick = () => switchMobileTab("library");
+    tabBtnStage.onclick = () => switchMobileTab("stage");
+    tabBtnCtrl.onclick = () => switchMobileTab("controls");
+
+    /* ========================================================
+       4. PROCEDURAL CANVASES: PiP + EXTENDED PRESENTATION
+       ======================================================== */
     const pipCanvas = document.getElementById("pip-canvas");
     const pipCtx = pipCanvas.getContext("2d");
     const pipVideo = document.getElementById("pip-video");
@@ -1488,7 +1600,7 @@
         case "floating-particles":
         case "stardust":
         case "dust-motes": {
-          const count = Math.floor(35 * s);
+          const count = Math.floor(40 * s);
           for (let i = 0; i < count; i++) {
             const px = ((Math.sin(i * 99 + t * spd) * 0.5 + 0.5) * width);
             const py = ((Math.cos(i * 33 + t * spd * 0.8) * 0.5 + 0.5) * height);
@@ -1499,13 +1611,29 @@
           }
           break;
         }
-        case "matrix-rain":
-        case "digital-noise": {
-          const cols = Math.floor(25 * s);
-          const colWidth = width / cols;
-          for (let i = 0; i < cols; i++) {
-            const dropY = ((t * spd * 120 + i * 45) % height);
-            ctx.fillRect(i * colWidth, dropY, 2 * s, 14 * s);
+        case "stage-beams":
+        case "spotlight-sweep": {
+          const centerX = width / 2;
+          ctx.beginPath();
+          ctx.moveTo(centerX, 0);
+          const spread = Math.sin(t * spd) * (width * 0.4);
+          ctx.lineTo(centerX + spread - 60, height);
+          ctx.lineTo(centerX + spread + 60, height);
+          ctx.closePath();
+          ctx.globalAlpha = 0.25;
+          ctx.fill();
+          break;
+        }
+        case "pulse-rings":
+        case "sound-ripples": {
+          ctx.lineWidth = 2 * s;
+          const maxR = Math.max(width, height) * 0.7;
+          for (let i = 0; i < 4; i++) {
+            const r = ((t * spd * 60 + i * (maxR / 4)) % maxR);
+            ctx.globalAlpha = Math.max(0, 1 - r / maxR);
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, r, 0, Math.PI * 2);
+            ctx.stroke();
           }
           break;
         }
@@ -1524,8 +1652,10 @@
       ctx.restore();
     }
 
-    function animatePiP() {
+    function animatePipAndStage() {
       animTick++;
+
+      // Animate PiP preview
       if (state.style.bgType === "pattern" && !state.blackout) {
         drawProceduralPattern(
           pipCtx,
@@ -1538,14 +1668,37 @@
           state.style.patternScale
         );
       }
-      requestAnimationFrame(animatePiP);
+
+      // Animate Presentation Screen (if active)
+      if (presentationWindow && !presentationWindow.closed && state.style.bgType === "pattern" && !state.blackout) {
+        const pCanvas = presentationWindow.document.getElementById("bg-canvas");
+        if (pCanvas) {
+          if (pCanvas.width !== presentationWindow.innerWidth) {
+            pCanvas.width = presentationWindow.innerWidth;
+            pCanvas.height = presentationWindow.innerHeight;
+          }
+          const pCtx = pCanvas.getContext("2d");
+          drawProceduralPattern(
+            pCtx,
+            pCanvas.width,
+            pCanvas.height,
+            animTick,
+            state.style.patternId,
+            state.style.patternColor,
+            state.style.patternSpeed,
+            state.style.patternScale
+          );
+        }
+      }
+
+      requestAnimationFrame(animatePipAndStage);
     }
 
     window.addEventListener("DOMContentLoaded", () => {
       resizePipCanvas();
       renderSongList();
       selectSong(state.songs[0].id);
-      animatePiP();
+      animatePipAndStage();
     });
   </script>
 </body>
