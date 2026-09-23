@@ -118,16 +118,25 @@
       width: 70px;
     }
 
+    /* Top-Right Code & Copy Cluster */
     .uid-container {
       display: flex;
       align-items: center;
       gap: 8px;
       background: #111827;
       border: 1px solid #374151;
-      padding: 5px 12px;
+      padding: 4px 10px;
       border-radius: 6px;
       flex-shrink: 0;
     }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #eab308;
+      display: inline-block;
+    }
+    .status-dot.online { background: #10b981; }
     .uid-title {
       font-size: 10px;
       text-transform: uppercase;
@@ -141,16 +150,20 @@
       color: #38bdf8;
       letter-spacing: 2px;
     }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #eab308;
-      display: inline-block;
+    .btn-copy-code {
+      background: #1f293d;
+      border: 1px solid #3b82f6;
+      color: #93c5fd;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .status-dot.online { background: #10b981; }
+    .btn-copy-code:hover { background: #2563eb; color: #fff; }
 
-    /* Workspace */
+    /* Main Workspace */
     main.workspace {
       flex: 1;
       display: grid;
@@ -209,7 +222,7 @@
     }
     .btn-outline:hover { background: #262b3a; }
 
-    /* Left Sidebar */
+    /* Song Library */
     .song-list-container {
       flex: 1;
       overflow-y: auto;
@@ -399,7 +412,7 @@
       transform: scale(0.95);
     }
 
-    /* Right Sidebar */
+    /* Right Sidebar Controls */
     .right-sidebar-content {
       flex: 1;
       overflow-y: auto;
@@ -616,10 +629,12 @@
       </label>
     </div>
 
+    <!-- 6-Digit Code with Dedicated Copy Button -->
     <div class="uid-container">
       <span class="status-dot" id="cloud-status"></span>
       <span class="uid-title">Stage Code</span>
       <span class="uid-value" id="device-uid-val">------</span>
+      <button class="btn-copy-code" id="btn-copy-code" title="Copy Stage Code">Copy Code</button>
     </div>
   </header>
 
@@ -912,7 +927,24 @@
     document.getElementById("device-uid-val").innerText = DEVICE_UID;
     const syncChannel = new BroadcastChannel(`stage_channel_${DEVICE_UID}`);
 
-    // Real-time Cloud Broker Setup (Zero-config public WSS)
+    // Setup Copy Code Button
+    const btnCopy = document.getElementById("btn-copy-code");
+    btnCopy.onclick = () => {
+      navigator.clipboard.writeText(DEVICE_UID).then(() => {
+        btnCopy.innerText = "Copied!";
+        btnCopy.style.background = "#10b981";
+        btnCopy.style.borderColor = "#10b981";
+        btnCopy.style.color = "#000";
+        setTimeout(() => {
+          btnCopy.innerText = "Copy Code";
+          btnCopy.style.background = "#1f293d";
+          btnCopy.style.borderColor = "#3b82f6";
+          btnCopy.style.color = "#93c5fd";
+        }, 2000);
+      });
+    };
+
+    // Public WebSocket Broker for Real-time Stage Cloud Sync
     const mqttClient = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
     const mqttTopic = `concert_stage_live_${DEVICE_UID}`;
     const cloudStatus = document.getElementById("cloud-status");
@@ -920,6 +952,13 @@
     mqttClient.on("connect", () => {
       cloudStatus.classList.add("online");
       broadcastState();
+
+      // Continuous heartbeat ping so Output can verify this stage port is actively open
+      setInterval(() => {
+        if (mqttClient.connected) {
+          mqttClient.publish(`concert_stage_ping_${DEVICE_UID}`, JSON.stringify({ active: true, time: Date.now() }), { qos: 0, retain: true });
+        }
+      }, 3000);
     });
 
     const state = {
@@ -972,7 +1011,8 @@
         uid: state.uid,
         activeLine: activeLineText,
         blackout: state.blackout,
-        style: state.style
+        style: state.style,
+        timestamp: Date.now()
       };
 
       const payloadStr = JSON.stringify(payload);
@@ -981,6 +1021,7 @@
 
       if (mqttClient && mqttClient.connected) {
         mqttClient.publish(mqttTopic, payloadStr, { qos: 0, retain: true });
+        mqttClient.publish(`concert_stage_ping_${DEVICE_UID}`, JSON.stringify({ active: true, time: Date.now() }), { qos: 0, retain: true });
       }
 
       renderPiP();
@@ -1044,7 +1085,7 @@
 
       document.getElementById("active-song-title").innerText = song.title;
       state.lines = parseLyrics(song.lyrics);
-      state.currentLineIndex = 0; // Default to first line
+      state.currentLineIndex = 0;
 
       renderSongList();
       renderJumpChips();
@@ -1458,7 +1499,6 @@
           }
           break;
         }
-
         case "matrix-rain":
         case "digital-noise": {
           const cols = Math.floor(25 * s);
@@ -1469,126 +1509,15 @@
           }
           break;
         }
-
-        case "stage-beams":
-        case "spotlight-sweep": {
-          const centerX = width / 2;
-          ctx.beginPath();
-          ctx.moveTo(centerX, 0);
-          const spread = Math.sin(t * spd) * (width * 0.4);
-          ctx.lineTo(centerX + spread - 60, height);
-          ctx.lineTo(centerX + spread + 60, height);
-          ctx.closePath();
-          ctx.globalAlpha = 0.25;
-          ctx.fill();
-          break;
-        }
-
-        case "laser-grid":
-        case "square-grid": {
-          ctx.lineWidth = 1;
-          ctx.globalAlpha = 0.35;
-          const step = Math.max(15, 30 * s);
-          for (let x = 0; x < width; x += step) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
-          }
-          const offset = (t * spd * 40) % step;
-          for (let y = offset; y < height; y += step) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
-          }
-          break;
-        }
-
-        case "pulse-rings":
-        case "sound-ripples":
-        case "concentric-circles": {
-          ctx.lineWidth = 2 * s;
-          const maxR = Math.max(width, height) * 0.7;
-          for (let i = 0; i < 4; i++) {
-            const r = ((t * spd * 60 + i * (maxR / 4)) % maxR);
-            ctx.globalAlpha = Math.max(0, 1 - r / maxR);
-            ctx.beginPath();
-            ctx.arc(width / 2, height / 2, r, 0, Math.PI * 2);
-            ctx.stroke();
-          }
-          break;
-        }
-
-        case "audio-waves":
-        case "sine-mesh":
-        case "aurora-waves": {
-          ctx.lineWidth = 2 * s;
-          for (let j = 0; j < 3; j++) {
-            ctx.beginPath();
-            ctx.globalAlpha = 0.5 - j * 0.12;
-            for (let x = 0; x <= width; x += 10) {
-              const y = (height / 2) + Math.sin(x * 0.02 * s + t * spd * 2 + j) * (25 * s);
-              if (x === 0) ctx.moveTo(x, y);
-              else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-          }
-          break;
-        }
-
-        case "diagonal-stripes":
-        case "subtle-stripes": {
-          ctx.lineWidth = 8 * s;
-          ctx.globalAlpha = 0.25;
-          const step = 28 * s;
-          const offset = (t * spd * 30) % step;
-          for (let x = -height + offset; x < width + height; x += step) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x + height, height);
-            ctx.stroke();
-          }
-          break;
-        }
-
-        case "honeycomb":
-        case "diamond-lattice": {
-          ctx.lineWidth = 1.5;
-          ctx.globalAlpha = 0.3;
-          const size = Math.max(16, 28 * s);
-          for (let y = 0; y < height + size; y += size * 1.5) {
-            for (let x = 0; x < width + size; x += size * 1.732) {
-              ctx.beginPath();
-              ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
-              ctx.stroke();
-            }
-          }
-          break;
-        }
-
-        case "warp-speed": {
-          const stars = 40;
-          ctx.lineWidth = 2 * s;
-          for (let i = 0; i < stars; i++) {
-            const angle = (i / stars) * Math.PI * 2;
-            const dist = ((t * spd * 80 + i * 20) % (width * 0.6));
-            const x1 = width/2 + Math.cos(angle) * dist;
-            const y1 = height/2 + Math.sin(angle) * dist;
-            const x2 = width/2 + Math.cos(angle) * (dist + 12 * s);
-            const y2 = height/2 + Math.sin(angle) * (dist + 12 * s);
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-          }
-          break;
-        }
-
         default: {
-          ctx.globalAlpha = 0.3;
-          const step = Math.max(20, 40 * s);
-          for (let x = 0; x < width; x += step) {
-            for (let y = 0; y < height; y += step) {
-              const rad = Math.abs(Math.sin((x + y + t * spd * 30) * 0.05)) * 4 * s;
-              ctx.beginPath();
-              ctx.arc(x, y, rad, 0, Math.PI * 2);
-              ctx.fill();
-            }
+          const count = Math.floor(35 * s);
+          for (let i = 0; i < count; i++) {
+            const px = ((Math.sin(i * 99 + t * spd) * 0.5 + 0.5) * width);
+            const py = ((Math.cos(i * 33 + t * spd * 0.8) * 0.5 + 0.5) * height);
+            const rad = ((i % 4) + 1) * s;
+            ctx.beginPath();
+            ctx.arc(px, py, rad, 0, Math.PI * 2);
+            ctx.fill();
           }
         }
       }
