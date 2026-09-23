@@ -39,7 +39,7 @@
       flex-direction: column;
     }
 
-    /* Top Navigation & Presenting Bar */
+    /* Header Bar */
     header.top-bar {
       min-height: 56px;
       background: var(--panel-bg);
@@ -116,7 +116,7 @@
       width: 70px;
     }
 
-    /* Presentation Toggle Cluster */
+    /* Presentation Trigger */
     .present-cluster {
       display: flex;
       align-items: center;
@@ -274,7 +274,7 @@
       text-decoration: none;
     }
 
-    /* Center Teleprompter Matrix */
+    /* Center Stage Prompter */
     .center-stage {
       display: flex;
       flex-direction: column;
@@ -616,7 +616,7 @@
       </label>
     </div>
 
-    <!-- Presentation Action Buttons -->
+    <!-- Presentation Trigger -->
     <div class="present-cluster">
       <button class="btn-present btn-start" id="btn-start-present">
         <span>&#9654;</span> Start Presenting
@@ -770,69 +770,70 @@
             </div>
           </div>
 
+          <!-- 50 UNIQUE PROCEDURAL PATTERNS -->
           <div id="pattern-options" style="display:flex; flex-direction:column; gap:8px;">
             <div class="control-row">
               <span>Pattern (50)</span>
               <select id="pattern-select" style="max-width: 190px;">
-                <optgroup label="Particles & Dots">
-                  <option value="floating-particles" selected>01. Classic Floating Particles</option>
-                  <option value="stardust">02. Stardust Drift</option>
-                  <option value="fireflies">03. Glowing Fireflies</option>
-                  <option value="matrix-rain">04. Matrix Digital Rain</option>
-                  <option value="snowfall">05. Gentle Snowfall</option>
-                  <option value="floating-bubbles">06. Floating Bubbles</option>
-                  <option value="dust-motes">07. Cinematic Dust Motes</option>
-                  <option value="warp-speed">08. Warp Speed Stars</option>
-                  <option value="orbiting-sparks">09. Orbiting Sparks</option>
-                  <option value="confetti-slow">10. Slow Stage Confetti</option>
+                <optgroup label="Particles & Drift">
+                  <option value="floating-orbs" selected>01. Floating Glowing Orbs</option>
+                  <option value="falling-snow">02. Falling Soft Snow</option>
+                  <option value="matrix-stream">03. Matrix Code Stream</option>
+                  <option value="stardust-drift">04. Stardust Cosmic Drift</option>
+                  <option value="fireflies">05. Flickering Fireflies</option>
+                  <option value="warp-speed">06. Warp Speed Hyperdrive</option>
+                  <option value="bubbles">07. Ascending Bubbles</option>
+                  <option value="orbiting-sparks">08. Orbiting Dual Sparks</option>
+                  <option value="confetti">09. Slow Stage Confetti</option>
+                  <option value="nebula-drift">10. Deep Nebula Glow Drift</option>
                 </optgroup>
                 <optgroup label="Concert & Stage Visuals">
-                  <option value="stage-beams">11. Stage Light Beams</option>
-                  <option value="laser-grid">12. Retro Laser Floor</option>
-                  <option value="pulse-rings">13. Expanding Pulse Rings</option>
-                  <option value="audio-waves">14. Audio Equalizer Sine Wave</option>
-                  <option value="cyber-tunnel">15. Cyber Perspective Tunnel</option>
-                  <option value="spotlight-sweep">16. Spotlight Radial Sweep</option>
-                  <option value="vortex">17. Hypnotic Swirl Vortex</option>
-                  <option value="beacon-radar">18. Beacon Radar Sweep</option>
-                  <option value="sound-ripples">19. Acoustic Sound Ripples</option>
-                  <option value="prism-shards">20. Floating Prism Shards</option>
+                  <option value="stage-beams">11. Sweeping Stage Beams</option>
+                  <option value="laser-floor">12. 3D Retro Laser Floor</option>
+                  <option value="pulse-rings">13. Concentric Audio Pulses</option>
+                  <option value="sine-equalizer">14. Multi Sine Equalizer</option>
+                  <option value="cyber-tunnel">15. 3D Cyber Perspective Tunnel</option>
+                  <option value="spotlight-sweep">16. Rotary Spotlight Sweep</option>
+                  <option value="hypnotic-vortex">17. Hypnotic Swirl Vortex</option>
+                  <option value="radar-scanner">18. Radar Scanner Sweep</option>
+                  <option value="vertical-blinds">19. Vertical Stage Blinds</option>
+                  <option value="floating-prisms">20. Floating 3D Prisms</option>
                 </optgroup>
-                <optgroup label="Geometric & Grids">
-                  <option value="dot-matrix">21. Static Dot Matrix</option>
-                  <option value="square-grid">22. Minimal Wireframe Grid</option>
-                  <option value="diagonal-stripes">23. Modern Diagonal Stripes</option>
+                <optgroup label="Geometry & Technical Nets">
+                  <option value="dot-matrix">21. Pulsing Dot Matrix</option>
+                  <option value="wireframe-grid">22. Minimal Wireframe Grid</option>
+                  <option value="diagonal-stripes">23. Angled Diagonal Stripes</option>
                   <option value="honeycomb">24. Hexagonal Honeycomb</option>
-                  <option value="isometric-cubes">25. Isometric Cube Mesh</option>
-                  <option value="chevron-arrows">26. Chevron Arrow Flow</option>
-                  <option value="houndstooth">27. Geometric Houndstooth</option>
-                  <option value="crosshatch">28. Crosshatch Technical Grid</option>
-                  <option value="concentric-circles">29. Concentric Target Rings</option>
-                  <option value="diamond-lattice">30. Diamond Lattice Net</option>
+                  <option value="isometric-cubes">25. Isometric 3D Cube Mesh</option>
+                  <option value="chevron-flow">26. Chevron Arrow Flow</option>
+                  <option value="houndstooth">27. Houndstooth Tessellation</option>
+                  <option value="crosshatch">28. Technical Crosshatching</option>
+                  <option value="target-rings">29. Target Reticle Rings</option>
+                  <option value="diamond-lattice">30. Diamond Lattice Mesh</option>
                 </optgroup>
                 <optgroup label="Waves & Flow Fields">
-                  <option value="sine-mesh">31. Flowing Sine Ribbon</option>
-                  <option value="topographic">32. Topographic Map Contours</option>
-                  <option value="aurora-waves">33. Aurora Stage Waves</option>
-                  <option value="neon-strands">34. Neon Energy Strands</option>
-                  <option value="liquid-flow">35. Liquid Surface Waves</option>
-                  <option value="pendulum-wave">36. Harmonograph Curves</option>
-                  <option value="terrain-wireframe">37. 3D Mountain Mesh</option>
+                  <option value="lissajous-curves">31. Harmonic Lissajous Curves</option>
+                  <option value="topographic-map">32. Topographic Contour Map</option>
+                  <option value="aurora-curtains">33. Multi Aurora Curtains</option>
+                  <option value="neon-strands">34. Neon Energy Ribbons</option>
+                  <option value="liquid-surface">35. Liquid Sine Surface</option>
+                  <option value="harmonograph">36. Dual-Axis Harmonograph</option>
+                  <option value="terrain-wireframe">37. 3D Wireframe Terrain</option>
                   <option value="frequency-bars">38. Digital Frequency Bars</option>
-                  <option value="perlin-smoke">39. Ambient Stage Fog Drift</option>
-                  <option value="vector-wind">40. Vector Flow Field</option>
+                  <option value="ambient-fog">39. Ambient Stage Fog Drift</option>
+                  <option value="vector-field">40. Vector Directional Flow</option>
                 </optgroup>
                 <optgroup label="Modern Minimalist & Textures">
-                  <option value="carbon-fiber">41. Carbon Fiber Mesh</option>
-                  <option value="circuit-board">42. Microchip Circuit Traces</option>
-                  <option value="blueprint">43. Architectural Blueprint</option>
-                  <option value="digital-noise">44. Retro TV Static Noise</option>
-                  <option value="pixel-mosaic">45. Slow Shifting Mosaic</option>
-                  <option value="subtle-stripes">46. Vertical Stage Blinds</option>
-                  <option value="halftone">47. Halftone Radial Fade</option>
-                  <option value="radial-sunburst">48. Slow Sunburst Rays</option>
-                  <option value="kaleidoscope">49. Kaleidoscope Symmetry</option>
-                  <option value="nebula-clouds">50. Deep Space Nebula</option>
+                  <option value="carbon-twill">41. Carbon Fiber Twill</option>
+                  <option value="circuit-traces">42. Microchip Circuit Traces</option>
+                  <option value="blueprint-grid">43. Architectural Blueprint</option>
+                  <option value="static-noise">44. Retro TV Noise Static</option>
+                  <option value="pixel-mosaic">45. Shifting Pixel Mosaic</option>
+                  <option value="halftone-radial">46. Halftone Radial Fade</option>
+                  <option value="sunburst-rays">47. Radiant Sunburst Rays</option>
+                  <option value="kaleidoscope">48. 6-Fold Dynamic Kaleidoscope</option>
+                  <option value="sacred-geometry">49. Sacred Metatron Stars</option>
+                  <option value="dna-helix">50. Spiral DNA Double Helix</option>
                 </optgroup>
               </select>
             </div>
@@ -934,7 +935,7 @@
         bgType: "pattern",
         bgOpacity: 100,
         bgDimmer: 30,
-        patternId: "floating-particles",
+        patternId: "floating-orbs",
         patternColor: "#38bdf8",
         patternSpeed: 3,
         patternScale: 50,
@@ -948,17 +949,15 @@
     let editingSongId = null;
 
     /* ========================================================
-       2. START / END PRESENTING WINDOW ENGINE (0ms Latency)
+       2. PRESENTATION WINDOW (0ms Latency)
        ======================================================== */
     const btnStartPresent = document.getElementById("btn-start-present");
     const btnEndPresent = document.getElementById("btn-end-present");
 
     btnStartPresent.onclick = () => {
-      // Calculate dual monitor positioning if available
       const dualScreenLeft = window.screen.availLeft || 0;
       const dualScreenTop = window.screen.availTop || 0;
       
-      // Open a clean blank window to present
       presentationWindow = window.open(
         "", 
         "StageOutputWindow", 
@@ -970,7 +969,6 @@
         return;
       }
 
-      // Inject full stage output HTML structure directly
       presentationWindow.document.write(`
         <!DOCTYPE html>
         <html>
@@ -1009,17 +1007,9 @@
 
       presentationWindow.document.close();
 
-      // Hook up full screen request
-      presentationWindow.onload = () => {
-        const docEl = presentationWindow.document.documentElement;
-        if (docEl.requestFullscreen) docEl.requestFullscreen().catch(() => {});
-      };
-
-      // Toggle buttons
       btnStartPresent.style.display = "none";
       btnEndPresent.style.display = "flex";
 
-      // Detect if window is closed manually by user
       const checkTimer = setInterval(() => {
         if (!presentationWindow || presentationWindow.closed) {
           clearInterval(checkTimer);
@@ -1041,7 +1031,6 @@
       btnEndPresent.style.display = "none";
     };
 
-    /* Synchronize Output Directly */
     function updatePresentationWindow() {
       if (!presentationWindow || presentationWindow.closed) return;
 
@@ -1058,15 +1047,11 @@
 
       if (!stageBox || !lyricText) return;
 
-      // Blackout
       stageBox.style.opacity = state.blackout ? "0" : "1";
-
-      // Dimmer & Opacity
       bgDimmer.style.opacity = state.style.bgDimmer / 100;
       bgCanvas.style.opacity = (state.style.bgOpacity / 100).toString();
       bgVideo.style.opacity = (state.style.bgOpacity / 100).toString();
 
-      // Header logo & title
       headerGroup.style.left = state.style.groupPosX + "%";
       headerGroup.style.top = state.style.groupPosY + "%";
       stageTitle.innerText = state.style.groupTitle || "";
@@ -1079,12 +1064,10 @@
         stageLogo.style.display = "none";
       }
 
-      // Font styling
       lyricText.style.fontFamily = state.style.fontFamily;
       lyricText.style.fontSize = state.style.fontSize + "px";
       lyricText.style.color = state.style.fontColor;
 
-      // Alignment
       const align = state.style.textAlign || "center";
       lyricContainer.style.justifyContent = align === "left" ? "flex-start" : (align === "right" ? "flex-end" : "center");
       lyricText.style.textAlign = align;
@@ -1094,7 +1077,6 @@
       else if (vert === "bottom") lyricContainer.style.alignItems = "flex-end";
       else lyricContainer.style.alignItems = "center";
 
-      // Active line
       const activeLine = (state.clearText || state.currentLineIndex === -1) 
         ? "" 
         : (state.lines[state.currentLineIndex]?.text || "STAGE READY");
@@ -1107,7 +1089,6 @@
         }, 120);
       }
 
-      // Video media handling
       if (state.style.bgType === "custom" && state.style.mediaData) {
         bgCanvas.style.display = "none";
         bgVideo.style.display = "block";
@@ -1122,14 +1103,13 @@
       }
     }
 
-    /* Broadcast Central State Update */
     function syncAll() {
       renderPiP();
       updatePresentationWindow();
     }
 
     /* ========================================================
-       3. SONG REPOSITORY & PARSING
+       3. SONG ACTIONS & PARSING
        ======================================================== */
     function saveSongs() {
       localStorage.setItem(`lyricsync_songs`, JSON.stringify(state.songs));
@@ -1340,7 +1320,7 @@
       reader.readAsText(file);
     };
 
-    // Panic Triggers
+    // Panic Actions
     document.getElementById("btn-panic-clear").onclick = () => {
       state.clearText = !state.clearText;
       document.getElementById("btn-panic-clear").innerText = state.clearText ? "Restore Text" : "Clear Text";
@@ -1375,7 +1355,7 @@
       }
     });
 
-    // Style Handlers
+    // Control Handlers
     document.getElementById("logo-input").onchange = (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -1472,7 +1452,7 @@
       syncAll();
     };
 
-    // Mobile Navigation Tabs
+    // Tabs
     const tabBtnLib = document.getElementById("tab-btn-library");
     const tabBtnStage = document.getElementById("tab-btn-stage");
     const tabBtnCtrl = document.getElementById("tab-btn-controls");
@@ -1502,7 +1482,7 @@
     tabBtnCtrl.onclick = () => switchMobileTab("controls");
 
     /* ========================================================
-       4. PROCEDURAL CANVASES: PiP + EXTENDED PRESENTATION
+       4. THE 50 UNIQUE PROCEDURAL MATHEMATICAL PATTERNS
        ======================================================== */
     const pipCanvas = document.getElementById("pip-canvas");
     const pipCtx = pipCanvas.getContext("2d");
@@ -1587,75 +1567,824 @@
       }
     }
 
-    function drawProceduralPattern(ctx, width, height, t, patternId, colorHex, speed, scale) {
-      ctx.clearRect(0, 0, width, height);
+    /* Rendering Master: 50 Explicit Algorithms */
+    function drawProceduralPattern(ctx, w, h, t, patternId, colorHex, speed, scale) {
+      ctx.clearRect(0, 0, w, h);
       ctx.save();
       ctx.fillStyle = colorHex;
       ctx.strokeStyle = colorHex;
 
-      const s = scale / 50;
+      const sc = scale / 50;
       const spd = speed * 0.02;
 
       switch(patternId) {
-        case "floating-particles":
-        case "stardust":
-        case "dust-motes": {
-          const count = Math.floor(40 * s);
+        // 01. Floating Glowing Orbs
+        case "floating-orbs": {
+          const count = Math.floor(25 * sc);
           for (let i = 0; i < count; i++) {
-            const px = ((Math.sin(i * 99 + t * spd) * 0.5 + 0.5) * width);
-            const py = ((Math.cos(i * 33 + t * spd * 0.8) * 0.5 + 0.5) * height);
-            const rad = ((i % 4) + 1) * s;
+            const x = ((Math.sin(i * 91 + t * spd * 0.7) * 0.5 + 0.5) * w);
+            const y = ((Math.cos(i * 37 + t * spd * 0.5) * 0.5 + 0.5) * h);
+            const r = ((i % 5) + 3) * sc;
+            ctx.globalAlpha = 0.35 + (i % 5) * 0.1;
             ctx.beginPath();
-            ctx.arc(px, py, rad, 0, Math.PI * 2);
+            ctx.arc(x, y, r, 0, Math.PI * 2);
             ctx.fill();
           }
           break;
         }
-        case "stage-beams":
-        case "spotlight-sweep": {
-          const centerX = width / 2;
+
+        // 02. Falling Soft Snow
+        case "falling-snow": {
+          const count = Math.floor(60 * sc);
+          for (let i = 0; i < count; i++) {
+            const x = (i * (w / count) + Math.sin(t * spd + i) * 15) % w;
+            const y = (t * spd * 80 + i * (h / count) * 3) % h;
+            ctx.globalAlpha = 0.4 + (i % 3) * 0.2;
+            ctx.beginPath();
+            ctx.arc(x, y, 2 * sc, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          break;
+        }
+
+        // 03. Matrix Code Stream
+        case "matrix-stream": {
+          const cols = Math.floor(40 * sc);
+          const colW = w / cols;
+          ctx.font = `${Math.max(10, 14 * sc)}px monospace`;
+          ctx.globalAlpha = 0.75;
+          for (let i = 0; i < cols; i++) {
+            const y = (t * spd * 180 + i * 45) % h;
+            ctx.fillText(String.fromCharCode(65 + ((i + Math.floor(t * 0.1)) % 26)), i * colW, y);
+          }
+          break;
+        }
+
+        // 04. Stardust Cosmic Drift
+        case "stardust-drift": {
+          const stars = Math.floor(90 * sc);
+          for (let i = 0; i < stars; i++) {
+            const x = (i * 1234.56) % w;
+            const y = (i * 7890.12 + t * spd * 20) % h;
+            ctx.globalAlpha = Math.abs(Math.sin(t * spd * 2 + i)) * 0.8;
+            ctx.fillRect(x, y, 1.5 * sc, 1.5 * sc);
+          }
+          break;
+        }
+
+        // 05. Flickering Fireflies
+        case "fireflies": {
+          const count = Math.floor(30 * sc);
+          for (let i = 0; i < count; i++) {
+            const x = w/2 + Math.cos(t * spd * 0.8 + i * 1.5) * (w * 0.4);
+            const y = h/2 + Math.sin(t * spd * 1.2 + i * 2.2) * (h * 0.4);
+            ctx.globalAlpha = Math.max(0, Math.sin(t * spd * 4 + i * 3));
+            ctx.beginPath();
+            ctx.arc(x, y, 3 * sc, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          break;
+        }
+
+        // 06. Warp Speed Hyperdrive
+        case "warp-speed": {
+          const stars = 50;
+          ctx.lineWidth = 2 * sc;
+          for (let i = 0; i < stars; i++) {
+            const ang = (i / stars) * Math.PI * 2;
+            const dist = (t * spd * 140 + i * 30) % (w * 0.6);
+            ctx.globalAlpha = Math.min(1, dist / (w * 0.4));
+            ctx.beginPath();
+            ctx.moveTo(w/2 + Math.cos(ang) * dist, h/2 + Math.sin(ang) * dist);
+            ctx.lineTo(w/2 + Math.cos(ang) * (dist + 20 * sc), h/2 + Math.sin(ang) * (dist + 20 * sc));
+            ctx.stroke();
+          }
+          break;
+        }
+
+        // 07. Ascending Bubbles
+        case "bubbles": {
+          const count = Math.floor(35 * sc);
+          ctx.lineWidth = 1.5 * sc;
+          for (let i = 0; i < count; i++) {
+            const x = (i * (w / count) + Math.sin(t * spd * 2 + i) * 20) % w;
+            const y = h - ((t * spd * 90 + i * 40) % (h + 50));
+            const r = ((i % 4) + 3) * sc;
+            ctx.globalAlpha = 0.5;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          break;
+        }
+
+        // 08. Orbiting Dual Sparks
+        case "orbiting-sparks": {
+          ctx.lineWidth = 2;
+          for (let k = 0; k < 6; k++) {
+            ctx.globalAlpha = 0.4 + k * 0.1;
+            const ang = t * spd * 2 + (k * Math.PI / 3);
+            const rx = Math.cos(ang) * (w * 0.35);
+            const ry = Math.sin(ang) * (h * 0.25);
+            ctx.beginPath();
+            ctx.arc(w/2 + rx, h/2 + ry, 4 * sc, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          break;
+        }
+
+        // 09. Slow Stage Confetti
+        case "confetti": {
+          const count = Math.floor(45 * sc);
+          for (let i = 0; i < count; i++) {
+            const x = (i * 77 + Math.sin(t * spd + i) * 30) % w;
+            const y = (t * spd * 70 + i * 55) % h;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(t * spd * 3 + i);
+            ctx.globalAlpha = 0.6;
+            ctx.fillRect(-4 * sc, -4 * sc, 8 * sc, 4 * sc);
+            ctx.restore();
+          }
+          break;
+        }
+
+        // 10. Deep Nebula Glow Drift
+        case "nebula-drift": {
+          for (let i = 0; i < 4; i++) {
+            const x = w/2 + Math.sin(t * spd * 0.5 + i) * (w * 0.25);
+            const y = h/2 + Math.cos(t * spd * 0.4 + i) * (h * 0.2);
+            const grad = ctx.createRadialGradient(x, y, 10, x, y, Math.max(w, h) * 0.35);
+            grad.addColorStop(0, colorHex);
+            grad.addColorStop(1, "transparent");
+            ctx.globalAlpha = 0.18;
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+          }
+          break;
+        }
+
+        // 11. Sweeping Stage Beams
+        case "stage-beams": {
+          const centerX = w / 2;
+          ctx.globalAlpha = 0.25;
+          for (let i = -2; i <= 2; i++) {
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            const spread = Math.sin(t * spd + i * 0.5) * (w * 0.45) + (i * w * 0.15);
+            ctx.lineTo(centerX + spread - 70, h);
+            ctx.lineTo(centerX + spread + 70, h);
+            ctx.closePath();
+            ctx.fill();
+          }
+          break;
+        }
+
+        // 12. 3D Retro Laser Floor
+        case "laser-floor": {
+          ctx.lineWidth = 1.5 * sc;
+          ctx.globalAlpha = 0.4;
+          const horizon = h * 0.55;
+          for (let x = -w * 0.5; x <= w * 1.5; x += 40 * sc) {
+            ctx.beginPath();
+            ctx.moveTo(w / 2, horizon);
+            ctx.lineTo(x, h);
+            ctx.stroke();
+          }
+          const step = (t * spd * 70) % 25;
+          for (let y = step; y < (h - horizon); y += 15) {
+            const actualY = horizon + Math.pow(y / (h - horizon), 2) * (h - horizon);
+            ctx.beginPath();
+            ctx.moveTo(0, actualY);
+            ctx.lineTo(w, actualY);
+            ctx.stroke();
+          }
+          break;
+        }
+
+        // 13. Concentric Audio Pulses
+        case "pulse-rings": {
+          ctx.lineWidth = 3 * sc;
+          const maxR = Math.max(w, h) * 0.7;
+          for (let i = 0; i < 5; i++) {
+            const r = (t * spd * 90 + i * (maxR / 5)) % maxR;
+            ctx.globalAlpha = Math.max(0, 1 - r / maxR);
+            ctx.beginPath();
+            ctx.arc(w/2, h/2, r, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          break;
+        }
+
+        // 14. Multi Sine Equalizer
+        case "sine-equalizer": {
+          ctx.lineWidth = 2.5 * sc;
+          for (let layer = 0; layer < 4; layer++) {
+            ctx.globalAlpha = 0.6 - layer * 0.12;
+            ctx.beginPath();
+            for (let x = 0; x <= w; x += 8) {
+              const y = h/2 + Math.sin(x * 0.01 * sc + t * spd * 3 + layer) * Math.cos(t * spd + layer) * (40 * sc);
+              if (x === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+          }
+          break;
+        }
+
+        // 15. 3D Cyber Perspective Tunnel
+        case "cyber-tunnel": {
+          ctx.lineWidth = 2 * sc;
+          const rings = 8;
+          for (let i = 0; i < rings; i++) {
+            const progress = ((t * spd * 2 + i / rings) % 1);
+            const boxW = w * progress;
+            const boxH = h * progress;
+            ctx.globalAlpha = progress * 0.6;
+            ctx.strokeRect(w/2 - boxW/2, h/2 - boxH/2, boxW, boxH);
+          }
           ctx.beginPath();
-          ctx.moveTo(centerX, 0);
-          const spread = Math.sin(t * spd) * (width * 0.4);
-          ctx.lineTo(centerX + spread - 60, height);
-          ctx.lineTo(centerX + spread + 60, height);
+          ctx.moveTo(0, 0); ctx.lineTo(w, h);
+          ctx.moveTo(w, 0); ctx.lineTo(0, h);
+          ctx.globalAlpha = 0.25;
+          ctx.stroke();
+          break;
+        }
+
+        // 16. Rotary Spotlight Sweep
+        case "spotlight-sweep": {
+          const ang = t * spd * 2;
+          ctx.beginPath();
+          ctx.moveTo(w/2, h/2);
+          ctx.arc(w/2, h/2, Math.max(w, h), ang, ang + 0.35);
           ctx.closePath();
           ctx.globalAlpha = 0.25;
           ctx.fill();
           break;
         }
-        case "pulse-rings":
-        case "sound-ripples": {
-          ctx.lineWidth = 2 * s;
-          const maxR = Math.max(width, height) * 0.7;
-          for (let i = 0; i < 4; i++) {
-            const r = ((t * spd * 60 + i * (maxR / 4)) % maxR);
-            ctx.globalAlpha = Math.max(0, 1 - r / maxR);
+
+        // 17. Hypnotic Swirl Vortex
+        case "hypnotic-vortex": {
+          ctx.lineWidth = 2 * sc;
+          ctx.globalAlpha = 0.35;
+          ctx.beginPath();
+          for (let a = 0; a < Math.PI * 12; a += 0.1) {
+            const r = a * 8 * sc;
+            const x = w/2 + Math.cos(a + t * spd * 3) * r;
+            const y = h/2 + Math.sin(a + t * spd * 3) * r;
+            if (a === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+          break;
+        }
+
+        // 18. Radar Scanner Sweep
+        case "radar-scanner": {
+          const sweepAng = t * spd * 3;
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = 0.3;
+          ctx.beginPath();
+          ctx.arc(w/2, h/2, Math.min(w, h) * 0.45, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(w/2, h/2);
+          ctx.lineTo(w/2 + Math.cos(sweepAng) * (w*0.5), h/2 + Math.sin(sweepAng) * (w*0.5));
+          ctx.stroke();
+          break;
+        }
+
+        // 19. Vertical Stage Blinds
+        case "vertical-blinds": {
+          const cols = 20;
+          const colW = w / cols;
+          for (let i = 0; i < cols; i++) {
+            ctx.globalAlpha = Math.abs(Math.sin(t * spd * 2 + i * 0.4)) * 0.35;
+            ctx.fillRect(i * colW, 0, colW - 4, h);
+          }
+          break;
+        }
+
+        // 20. Floating 3D Prisms
+        case "floating-prisms": {
+          ctx.lineWidth = 1.5 * sc;
+          ctx.globalAlpha = 0.45;
+          for (let i = 0; i < 8; i++) {
+            const px = (i * 150 + t * spd * 30) % (w + 100) - 50;
+            const py = h/2 + Math.sin(t * spd + i) * 80;
+            ctx.save();
+            ctx.translate(px, py);
+            ctx.rotate(t * spd + i);
+            ctx.strokeRect(-20 * sc, -20 * sc, 40 * sc, 40 * sc);
+            ctx.restore();
+          }
+          break;
+        }
+
+        // 21. Pulsing Dot Matrix
+        case "dot-matrix": {
+          const step = Math.max(16, 28 * sc);
+          for (let x = step/2; x < w; x += step) {
+            for (let y = step/2; y < h; y += step) {
+              const pulse = Math.sin((x + y) * 0.02 + t * spd * 3);
+              ctx.globalAlpha = Math.max(0.1, pulse * 0.6);
+              ctx.beginPath();
+              ctx.arc(x, y, 2 * sc, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+          break;
+        }
+
+        // 22. Minimal Wireframe Grid
+        case "wireframe-grid": {
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 0.25;
+          const step = Math.max(20, 40 * sc);
+          for (let x = 0; x <= w; x += step) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+          }
+          for (let y = 0; y <= h; y += step) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+          }
+          break;
+        }
+
+        // 23. Angled Diagonal Stripes
+        case "diagonal-stripes": {
+          ctx.lineWidth = 12 * sc;
+          ctx.globalAlpha = 0.25;
+          const step = 45 * sc;
+          const offset = (t * spd * 60) % step;
+          for (let x = -h + offset; x < w + h; x += step) {
             ctx.beginPath();
-            ctx.arc(width / 2, height / 2, r, 0, Math.PI * 2);
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x + h, h);
             ctx.stroke();
           }
           break;
         }
-        default: {
-          const count = Math.floor(35 * s);
-          for (let i = 0; i < count; i++) {
-            const px = ((Math.sin(i * 99 + t * spd) * 0.5 + 0.5) * width);
-            const py = ((Math.cos(i * 33 + t * spd * 0.8) * 0.5 + 0.5) * height);
-            const rad = ((i % 4) + 1) * s;
+
+        // 24. Hexagonal Honeycomb
+        case "honeycomb": {
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = 0.35;
+          const hexR = Math.max(20, 35 * sc);
+          const dx = hexR * 1.5;
+          const dy = hexR * Math.sqrt(3);
+          for (let row = 0; row < h / dy + 2; row++) {
+            for (let col = 0; col < w / dx + 2; col++) {
+              const cx = col * dx;
+              const cy = row * dy + (col % 2 === 1 ? dy / 2 : 0);
+              ctx.beginPath();
+              for (let a = 0; a < 6; a++) {
+                const angle = a * Math.PI / 3;
+                const hx = cx + Math.cos(angle) * (hexR * 0.85);
+                const hy = cy + Math.sin(angle) * (hexR * 0.85);
+                if (a === 0) ctx.moveTo(hx, hy);
+                else ctx.lineTo(hx, hy);
+              }
+              ctx.closePath();
+              ctx.stroke();
+            }
+          }
+          break;
+        }
+
+        // 25. Isometric 3D Cube Mesh
+        case "isometric-cubes": {
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 0.3;
+          const sz = 35 * sc;
+          for (let x = 0; x < w + sz * 2; x += sz * 2) {
+            for (let y = 0; y < h + sz * 2; y += sz * 2) {
+              ctx.beginPath();
+              ctx.moveTo(x, y); ctx.lineTo(x + sz, y - sz * 0.5);
+              ctx.lineTo(x + sz * 2, y); ctx.lineTo(x + sz, y + sz * 0.5);
+              ctx.closePath();
+              ctx.stroke();
+            }
+          }
+          break;
+        }
+
+        // 26. Chevron Arrow Flow
+        case "chevron-flow": {
+          ctx.lineWidth = 3 * sc;
+          ctx.globalAlpha = 0.35;
+          const step = 40 * sc;
+          const offset = (t * spd * 60) % step;
+          for (let y = -step + offset; y < h + step; y += step) {
             ctx.beginPath();
-            ctx.arc(px, py, rad, 0, Math.PI * 2);
+            ctx.moveTo(0, y);
+            ctx.lineTo(w / 2, y + 25 * sc);
+            ctx.lineTo(w, y);
+            ctx.stroke();
+          }
+          break;
+        }
+
+        // 27. Houndstooth Tessellation
+        case "houndstooth": {
+          ctx.globalAlpha = 0.22;
+          const sz = Math.max(16, 32 * sc);
+          for (let x = 0; x < w; x += sz * 2) {
+            for (let y = 0; y < h; y += sz * 2) {
+              ctx.fillRect(x, y, sz, sz);
+              ctx.beginPath();
+              ctx.moveTo(x + sz, y);
+              ctx.lineTo(x + sz * 2, y + sz);
+              ctx.lineTo(x + sz, y + sz);
+              ctx.fill();
+            }
+          }
+          break;
+        }
+
+        // 28. Technical Crosshatching
+        case "crosshatch": {
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 0.28;
+          const step = 20 * sc;
+          for (let d = 0; d < w + h; d += step) {
+            ctx.beginPath(); ctx.moveTo(d, 0); ctx.lineTo(0, d); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(w - d, 0); ctx.lineTo(w, d); ctx.stroke();
+          }
+          break;
+        }
+
+        // 29. Target Reticle Rings
+        case "target-rings": {
+          ctx.lineWidth = 2 * sc;
+          ctx.globalAlpha = 0.35;
+          for (let r = 20; r < Math.min(w, h) * 0.5; r += 35 * sc) {
+            ctx.beginPath();
+            ctx.arc(w/2, h/2, r, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.moveTo(w/2, 0); ctx.lineTo(w/2, h);
+          ctx.moveTo(0, h/2); ctx.lineTo(w, h/2);
+          ctx.stroke();
+          break;
+        }
+
+        // 30. Diamond Lattice Mesh
+        case "diamond-lattice": {
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = 0.3;
+          const sz = 30 * sc;
+          for (let x = 0; x < w + sz; x += sz) {
+            for (let y = 0; y < h + sz; y += sz) {
+              ctx.beginPath();
+              ctx.moveTo(x, y - sz/2);
+              ctx.lineTo(x + sz/2, y);
+              ctx.lineTo(x, y + sz/2);
+              ctx.lineTo(x - sz/2, y);
+              ctx.closePath();
+              ctx.stroke();
+            }
+          }
+          break;
+        }
+
+        // 31. Harmonic Lissajous Curves
+        case "lissajous-curves": {
+          ctx.lineWidth = 2 * sc;
+          ctx.globalAlpha = 0.5;
+          ctx.beginPath();
+          for (let a = 0; a < Math.PI * 4; a += 0.02) {
+            const x = w/2 + Math.sin(a * 3 + t * spd * 2) * (w * 0.4);
+            const y = h/2 + Math.sin(a * 2) * (h * 0.35);
+            if (a === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+          break;
+        }
+
+        // 32. Topographic Contour Map
+        case "topographic-map": {
+          ctx.lineWidth = 1.5;
+          for (let layer = 1; layer <= 6; layer++) {
+            ctx.globalAlpha = 0.15 + layer * 0.05;
+            ctx.beginPath();
+            for (let a = 0; a <= Math.PI * 2; a += 0.1) {
+              const r = layer * 35 * sc + Math.sin(a * 5 + t * spd + layer) * 15 * sc;
+              const x = w/2 + Math.cos(a) * r;
+              const y = h/2 + Math.sin(a) * r;
+              if (a === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.stroke();
+          }
+          break;
+        }
+
+        // 33. Multi Aurora Curtains
+        case "aurora-curtains": {
+          for (let c = 0; c < 3; c++) {
+            ctx.globalAlpha = 0.22;
+            ctx.beginPath();
+            ctx.moveTo(0, h);
+            for (let x = 0; x <= w; x += 15) {
+              const y = (h * 0.3) + Math.sin(x * 0.005 + t * spd * 2 + c) * 60 * sc;
+              ctx.lineTo(x, y);
+            }
+            ctx.lineTo(w, h);
+            ctx.closePath();
             ctx.fill();
           }
+          break;
+        }
+
+        // 34. Neon Energy Ribbons
+        case "neon-strands": {
+          ctx.lineWidth = 3 * sc;
+          for (let i = 0; i < 3; i++) {
+            ctx.globalAlpha = 0.45;
+            ctx.beginPath();
+            for (let y = 0; y <= h; y += 10) {
+              const x = (w * 0.3 * (i + 1)) + Math.sin(y * 0.02 + t * spd * 3 + i) * 35 * sc;
+              if (y === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+          }
+          break;
+        }
+
+        // 35. Liquid Sine Surface
+        case "liquid-surface": {
+          ctx.globalAlpha = 0.35;
+          ctx.beginPath();
+          ctx.moveTo(0, h);
+          for (let x = 0; x <= w; x += 10) {
+            const y = h * 0.65 + Math.sin(x * 0.01 + t * spd * 3) * (20 * sc) + Math.cos(x * 0.02 - t * spd) * (15 * sc);
+            ctx.lineTo(x, y);
+          }
+          ctx.lineTo(w, h);
+          ctx.closePath();
+          ctx.fill();
+          break;
+        }
+
+        // 36. Dual-Axis Harmonograph
+        case "harmonograph": {
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = 0.45;
+          ctx.beginPath();
+          for (let p = 0; p < 800; p++) {
+            const rad = p * 0.01;
+            const x = w/2 + (Math.sin(rad * 2.01 + t * spd) + Math.sin(rad * 3)) * (w * 0.2);
+            const y = h/2 + (Math.cos(rad * 1.99) + Math.cos(rad * 4)) * (h * 0.2);
+            if (p === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+          break;
+        }
+
+        // 37. 3D Wireframe Terrain
+        case "terrain-wireframe": {
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 0.35;
+          const rows = 12;
+          for (let r = 0; r < rows; r++) {
+            const py = h * 0.45 + (r / rows) * (h * 0.55);
+            ctx.beginPath();
+            for (let x = 0; x <= w; x += 20) {
+              const elev = Math.sin(x * 0.02 + r + t * spd * 2) * (15 * sc);
+              if (x === 0) ctx.moveTo(x, py + elev);
+              else ctx.lineTo(x, py + elev);
+            }
+            ctx.stroke();
+          }
+          break;
+        }
+
+        // 38. Digital Frequency Bars
+        case "frequency-bars": {
+          const bars = Math.floor(32 * sc);
+          const barW = w / bars;
+          ctx.globalAlpha = 0.5;
+          for (let i = 0; i < bars; i++) {
+            const barH = Math.abs(Math.sin(i * 0.3 + t * spd * 4)) * (h * 0.5);
+            ctx.fillRect(i * barW + 2, h - barH, barW - 4, barH);
+          }
+          break;
+        }
+
+        // 39. Ambient Stage Fog Drift
+        case "ambient-fog": {
+          for (let f = 0; f < 5; f++) {
+            const py = h * 0.3 + (f * h * 0.15);
+            ctx.globalAlpha = 0.18;
+            ctx.beginPath();
+            ctx.ellipse(w/2 + Math.sin(t * spd + f) * 100, py, w * 0.4, 25 * sc, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          break;
+        }
+
+        // 40. Vector Directional Flow
+        case "vector-field": {
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = 0.35;
+          const step = Math.max(25, 40 * sc);
+          for (let x = step/2; x < w; x += step) {
+            for (let y = step/2; y < h; y += step) {
+              const ang = Math.sin(x * 0.01 + t * spd) + Math.cos(y * 0.01 + t * spd);
+              ctx.beginPath();
+              ctx.moveTo(x, y);
+              ctx.lineTo(x + Math.cos(ang) * 12 * sc, y + Math.sin(ang) * 12 * sc);
+              ctx.stroke();
+            }
+          }
+          break;
+        }
+
+        // 41. Carbon Fiber Twill
+        case "carbon-twill": {
+          ctx.globalAlpha = 0.25;
+          const sz = 8 * sc;
+          for (let x = 0; x < w; x += sz * 2) {
+            for (let y = 0; y < h; y += sz * 2) {
+              ctx.fillRect(x, y, sz, sz);
+              ctx.fillRect(x + sz, y + sz, sz, sz);
+            }
+          }
+          break;
+        }
+
+        // 42. Microchip Circuit Traces
+        case "circuit-traces": {
+          ctx.lineWidth = 2 * sc;
+          ctx.globalAlpha = 0.4;
+          const step = 50 * sc;
+          for (let x = 0; x < w; x += step) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h * 0.4);
+            ctx.lineTo(x + 25 * sc, h * 0.5);
+            ctx.lineTo(x + 25 * sc, h);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(x + 25 * sc, h * 0.5, 3 * sc, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          break;
+        }
+
+        // 43. Architectural Blueprint Grid
+        case "blueprint-grid": {
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 0.2;
+          for (let x = 0; x < w; x += 15 * sc) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+          }
+          for (let y = 0; y < h; y += 15 * sc) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+          }
+          ctx.lineWidth = 2;
+          ctx.globalAlpha = 0.4;
+          for (let x = 0; x < w; x += 75 * sc) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+          }
+          break;
+        }
+
+        // 44. Retro TV Noise Static
+        case "static-noise": {
+          ctx.globalAlpha = 0.18;
+          for (let i = 0; i < 400; i++) {
+            const rx = Math.random() * w;
+            const ry = Math.random() * h;
+            ctx.fillRect(rx, ry, 2 * sc, 2 * sc);
+          }
+          break;
+        }
+
+        // 45. Shifting Pixel Mosaic
+        case "pixel-mosaic": {
+          const sz = 24 * sc;
+          for (let x = 0; x < w; x += sz) {
+            for (let y = 0; y < h; y += sz) {
+              const alpha = Math.abs(Math.sin(x + y + t * spd * 2)) * 0.35;
+              ctx.globalAlpha = alpha;
+              ctx.fillRect(x + 2, y + 2, sz - 4, sz - 4);
+            }
+          }
+          break;
+        }
+
+        // 46. Halftone Radial Fade
+        case "halftone-radial": {
+          const step = 25 * sc;
+          for (let x = 0; x < w; x += step) {
+            for (let y = 0; y < h; y += step) {
+              const dist = Math.hypot(x - w/2, y - h/2);
+              const maxDist = Math.hypot(w/2, h/2);
+              const r = (1 - dist / maxDist) * 8 * sc;
+              if (r > 0) {
+                ctx.globalAlpha = 0.4;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+              }
+            }
+          }
+          break;
+        }
+
+        // 47. Radiant Sunburst Rays
+        case "sunburst-rays": {
+          const rays = 24;
+          const angStep = (Math.PI * 2) / rays;
+          ctx.globalAlpha = 0.25;
+          for (let i = 0; i < rays; i += 2) {
+            ctx.beginPath();
+            ctx.moveTo(w/2, h/2);
+            ctx.arc(w/2, h/2, Math.max(w, h), i * angStep + t * spd, (i + 1) * angStep + t * spd);
+            ctx.closePath();
+            ctx.fill();
+          }
+          break;
+        }
+
+        // 48. 6-Fold Dynamic Kaleidoscope
+        case "kaleidoscope": {
+          ctx.lineWidth = 2 * sc;
+          ctx.globalAlpha = 0.45;
+          ctx.save();
+          ctx.translate(w/2, h/2);
+          for (let i = 0; i < 6; i++) {
+            ctx.rotate(Math.PI / 3);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.sin(t * spd) * 80 * sc, Math.cos(t * spd) * 80 * sc);
+            ctx.lineTo(Math.cos(t * spd * 2) * 120 * sc, 0);
+            ctx.closePath();
+            ctx.stroke();
+          }
+          ctx.restore();
+          break;
+        }
+
+        // 49. Sacred Metatron Stars
+        case "sacred-geometry": {
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = 0.4;
+          ctx.save();
+          ctx.translate(w/2, h/2);
+          ctx.rotate(t * spd);
+          const rad = Math.min(w, h) * 0.3;
+          for (let i = 0; i < 6; i++) {
+            const a = i * Math.PI / 3;
+            ctx.beginPath();
+            ctx.arc(Math.cos(a) * rad, Math.sin(a) * rad, rad * 0.6, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.arc(0, 0, rad, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+          break;
+        }
+
+        // 50. Spiral DNA Double Helix
+        case "dna-helix": {
+          ctx.lineWidth = 2 * sc;
+          const points = 35;
+          for (let i = 0; i < points; i++) {
+            const py = (i / points) * h;
+            const phase = py * 0.015 + t * spd * 4;
+            const x1 = w/2 + Math.sin(phase) * (60 * sc);
+            const x2 = w/2 - Math.sin(phase) * (60 * sc);
+            ctx.globalAlpha = 0.5;
+            ctx.beginPath();
+            ctx.arc(x1, py, 3 * sc, 0, Math.PI * 2);
+            ctx.arc(x2, py, 3 * sc, 0, Math.PI * 2);
+            ctx.fill();
+            if (i % 3 === 0) {
+              ctx.globalAlpha = 0.25;
+              ctx.beginPath();
+              ctx.moveTo(x1, py);
+              ctx.lineTo(x2, py);
+              ctx.stroke();
+            }
+          }
+          break;
         }
       }
       ctx.restore();
     }
 
+    /* Animation Loop */
     function animatePipAndStage() {
       animTick++;
 
-      // Animate PiP preview
       if (state.style.bgType === "pattern" && !state.blackout) {
         drawProceduralPattern(
           pipCtx,
@@ -1669,7 +2398,6 @@
         );
       }
 
-      // Animate Presentation Screen (if active)
       if (presentationWindow && !presentationWindow.closed && state.style.bgType === "pattern" && !state.blackout) {
         const pCanvas = presentationWindow.document.getElementById("bg-canvas");
         if (pCanvas) {
